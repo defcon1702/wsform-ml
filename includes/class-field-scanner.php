@@ -274,18 +274,27 @@ class WSForm_ML_Field_Scanner {
 		global $wpdb;
 		$table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_FIELD_CACHE);
 
+		// Lade existierende Felder mit field_id + field_path als Key
 		$existing_fields = $wpdb->get_results($wpdb->prepare(
 			"SELECT field_id, field_path FROM $table WHERE form_id = %d",
 			$form_id
-		), OBJECT_K);
+		), ARRAY_A);
 
-		$discovered_paths = [];
+		// Erstelle Lookup-Map mit field_id + field_path
+		$existing_map = [];
+		foreach ($existing_fields as $field) {
+			$key = $field['field_id'] . '::' . $field['field_path'];
+			$existing_map[$key] = true;
+		}
+
+		$discovered_keys = [];
 
 		foreach ($discovered_fields as $field_data) {
-			$discovered_paths[$field_data['field_path']] = true;
-			$key = $field_data['field_path'];
+			$key = $field_data['field_id'] . '::' . $field_data['field_path'];
+			$discovered_keys[$key] = true;
 
-			if (isset($existing_fields[$key])) {
+			if (isset($existing_map[$key])) {
+				// UPDATE existierendes Feld
 				$wpdb->update(
 					$table,
 					[
@@ -300,11 +309,13 @@ class WSForm_ML_Field_Scanner {
 					],
 					[
 						'form_id' => $form_id,
+						'field_id' => $field_data['field_id'],
 						'field_path' => $field_data['field_path']
 					]
 				);
 				$stats['updated_fields']++;
 			} else {
+				// INSERT neues Feld
 				$wpdb->insert(
 					$table,
 					[
@@ -325,13 +336,16 @@ class WSForm_ML_Field_Scanner {
 			}
 		}
 
-		foreach ($existing_fields as $path => $field) {
-			if (!isset($discovered_paths[$path])) {
+		// Lösche Felder die nicht mehr existieren
+		foreach ($existing_fields as $field) {
+			$key = $field['field_id'] . '::' . $field['field_path'];
+			if (!isset($discovered_keys[$key])) {
 				$wpdb->delete(
 					$table,
 					[
 						'form_id' => $form_id,
-						'field_path' => $path
+						'field_id' => $field['field_id'],
+						'field_path' => $field['field_path']
 					]
 				);
 				$stats['deleted_fields']++;
