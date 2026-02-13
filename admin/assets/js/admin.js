@@ -147,12 +147,20 @@
 					this.fetchStats(formId)
 				]);
 
+				console.log('Loaded fields:', fields);
+				console.log('Fields count:', fields.length);
+
 				this.fields = fields;
 				this.renderStats(stats);
 				this.renderLanguageTabs();
 
 				if (this.currentLanguage) {
 					await this.loadTranslations(formId, this.currentLanguage);
+				} else if (wsformML.languages.length > 0) {
+					const nonDefaultLang = wsformML.languages.find(l => !l.is_default);
+					if (nonDefaultLang) {
+						this.selectLanguage(nonDefaultLang.code);
+					}
 				}
 
 			} catch (error) {

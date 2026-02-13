@@ -64,7 +64,10 @@ header('Content-Type: text/html; charset=utf-8');
 		
 		if ($polylang_active) {
 			$languages = pll_languages_list(['fields' => false]);
-			echo '<p>Verfügbare Sprachen: <strong>' . implode(', ', $languages) . '</strong></p>';
+			$lang_codes = array_map(function($lang) {
+				return is_object($lang) && isset($lang->slug) ? $lang->slug : (string)$lang;
+			}, $languages);
+			echo '<p>Verfügbare Sprachen: <strong>' . implode(', ', $lang_codes) . '</strong></p>';
 			echo '<p>Standard-Sprache: <strong>' . pll_default_language() . '</strong></p>';
 			echo '<p>Aktuelle Sprache: <strong>' . pll_current_language() . '</strong></p>';
 		}
