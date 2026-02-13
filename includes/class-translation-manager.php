@@ -186,10 +186,13 @@ class WSForm_ML_Translation_Manager {
 		];
 
 		foreach ($languages as $lang) {
+			$lang_code = $lang['code'];
+			$lang_name = $lang['name'];
+			
 			$translated_count = $wpdb->get_var($wpdb->prepare(
 				"SELECT COUNT(DISTINCT CONCAT(field_id, '-', property_type)) FROM $trans_table WHERE form_id = %d AND language_code = %s",
 				$form_id,
-				$lang['code']
+				$lang_code
 			));
 
 			$total_translatable = $wpdb->get_var($wpdb->prepare(
@@ -197,8 +200,8 @@ class WSForm_ML_Translation_Manager {
 				$form_id
 			));
 
-			$stats['languages'][$lang['code']] = [
-				'name' => $lang['name'],
+			$stats['languages'][$lang_code] = [
+				'name' => $lang_name,
 				'translated' => (int)$translated_count,
 				'total' => (int)$total_translatable,
 				'percentage' => $total_translatable > 0 ? round(($translated_count / $total_translatable) * 100, 2) : 0
