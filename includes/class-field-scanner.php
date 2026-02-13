@@ -55,16 +55,44 @@ class WSForm_ML_Field_Scanner {
 
 	private function get_form_object($form_id) {
 		if (!class_exists('WS_Form_Form')) {
-			return false;
+			throw new Exception(__('WS Form nicht installiert', 'wsform-ml'));
 		}
 
 		try {
+			// Validiere Form ID
+			if (empty($form_id) || !is_numeric($form_id)) {
+				throw new Exception(__('Ungültige Formular-ID', 'wsform-ml'));
+			}
+
+			// Buffer Output um HTML-Fehler zu fangen
+			ob_start();
 			$ws_form = new WS_Form_Form();
-			$ws_form->id = $form_id;
+			$ws_form->id = absint($form_id);
+			
+			// Prüfe ob Form existiert bevor wir sie lesen
+			global $wpdb;
+			$form_exists = $wpdb->get_var($wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->prefix}wsf_form WHERE id = %d AND status != 'trash'",
+				$form_id
+			));
+			
+			if (!$form_exists) {
+				ob_end_clean();
+				throw new Exception(__('Formular nicht gefunden oder im Papierkorb', 'wsform-ml'));
+			}
+			
 			$form_object = $ws_form->db_read(true, true);
+			ob_end_clean();
+			
+			if (!$form_object || !isset($form_object->id)) {
+				throw new Exception(__('Formular konnte nicht geladen werden', 'wsform-ml'));
+			}
+			
 			return $form_object;
 		} catch (Exception $e) {
-			return false;
+			ob_end_clean();
+			error_log('WSForm ML: get_form_object error - ' . $e->getMessage());
+			throw $e;
 		}
 	}
 
