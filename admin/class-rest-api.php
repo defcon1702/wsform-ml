@@ -149,7 +149,7 @@ class WSForm_ML_REST_API {
 			}
 
 			$forms = $wpdb->get_results(
-				"SELECT id, label, date_added, date_updated FROM {$wpdb->prefix}wsf_form ORDER BY label ASC"
+				"SELECT id, label, date_added, date_updated FROM {$wpdb->prefix}wsf_form WHERE status != 'trash' ORDER BY label ASC"
 			);
 
 			if ($wpdb->last_error) {

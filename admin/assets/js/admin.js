@@ -128,9 +128,14 @@
 			this.currentFormId = formId;
 			const form = this.forms.find(f => f.id === formId);
 
+			if (!form) {
+				console.error('Form not found:', formId);
+				return;
+			}
+
 			document.getElementById('wsform-ml-welcome').style.display = 'none';
 			document.getElementById('wsform-ml-form-detail').style.display = 'block';
-			document.getElementById('wsform-ml-form-title').textContent = form.label;
+			document.getElementById('wsform-ml-form-title').textContent = form.label || `Form ${formId}`;
 
 			await this.loadFormData(formId);
 		},
