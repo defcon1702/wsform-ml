@@ -24,6 +24,7 @@ class WSForm_ML_Polylang_Integration {
 					'code' => 'en',
 					'name' => 'English',
 					'flag' => '',
+					'flag_url' => '',
 					'is_default' => true
 				]
 			];
@@ -41,6 +42,7 @@ class WSForm_ML_Polylang_Integration {
 						'code' => 'en',
 						'name' => 'English',
 						'flag' => '',
+						'flag_url' => '',
 						'is_default' => true
 					]
 				];
@@ -52,6 +54,7 @@ class WSForm_ML_Polylang_Integration {
 						'code' => $lang_code,
 						'name' => $lang_code,
 						'flag' => '',
+						'flag_url' => '',
 						'is_default' => $lang_code === $default_lang
 					];
 					continue;
@@ -59,10 +62,20 @@ class WSForm_ML_Polylang_Integration {
 
 				$lang_obj = PLL()->model->get_language($lang_code);
 				
+				$flag_url = '';
+				if (isset($lang_obj->flag_url) && !empty($lang_obj->flag_url)) {
+					$flag_url = $lang_obj->flag_url;
+				} elseif (isset($lang_obj->flag) && !empty($lang_obj->flag)) {
+					if (preg_match('/src=["\']([^"\']+)["\']/', $lang_obj->flag, $matches)) {
+						$flag_url = $matches[1];
+					}
+				}
+				
 				$languages[] = [
 					'code' => $lang_code,
 					'name' => $lang_obj->name ?? $lang_code,
-					'flag' => $lang_obj->flag ?? '',
+					'flag' => '',
+					'flag_url' => $flag_url,
 					'is_default' => $lang_code === $default_lang
 				];
 			}
@@ -73,6 +86,7 @@ class WSForm_ML_Polylang_Integration {
 					'code' => 'en',
 					'name' => 'English',
 					'flag' => '',
+					'flag_url' => '',
 					'is_default' => true
 				]
 			];

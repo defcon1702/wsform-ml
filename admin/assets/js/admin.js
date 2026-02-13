@@ -31,7 +31,7 @@
 
 			const html = wsformML.languages.map(lang => `
 				<span class="wsform-ml-language-badge ${lang.is_default ? 'is-default' : ''}">
-					${lang.flag ? `<img src="${lang.flag}" alt="${lang.name}" style="width: 16px; height: 12px;">` : ''}
+					${lang.flag_url && lang.flag_url !== '' ? `<img src="${lang.flag_url}" alt="${lang.name}" style="width: 16px; height: 12px;">` : ''}
 					${lang.name}
 					${lang.is_default ? '(Standard)' : ''}
 				</span>
@@ -190,7 +190,7 @@
 
 			container.innerHTML = nonDefaultLanguages.map(lang => `
 				<button class="wsform-ml-language-tab" data-lang="${lang.code}">
-					${lang.flag && lang.flag !== '' ? `<img src="${lang.flag}" alt="${lang.name}" style="width: 16px; height: 12px; margin-right: 5px;">` : ''}
+					${lang.flag_url && lang.flag_url !== '' ? `<img src="${lang.flag_url}" alt="${lang.name}" style="width: 16px; height: 12px; margin-right: 5px;">` : ''}
 					${lang.name}
 				</button>
 			`).join('');
