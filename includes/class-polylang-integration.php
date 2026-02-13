@@ -51,8 +51,8 @@ class WSForm_ML_Polylang_Integration {
 			foreach ($pll_languages as $lang_code) {
 				if (!function_exists('PLL') || !isset(PLL()->model)) {
 					$languages[] = [
-						'code' => $lang_code,
-						'name' => $lang_code,
+						'code' => (string)$lang_code,
+						'name' => (string)$lang_code,
 						'flag' => '',
 						'flag_url' => '',
 						'is_default' => $lang_code === $default_lang
@@ -62,21 +62,30 @@ class WSForm_ML_Polylang_Integration {
 
 				$lang_obj = PLL()->model->get_language($lang_code);
 				
+				if (!$lang_obj) {
+					continue;
+				}
+				
+				$code = is_object($lang_obj) && isset($lang_obj->slug) ? (string)$lang_obj->slug : (string)$lang_code;
+				$name = is_object($lang_obj) && isset($lang_obj->name) ? (string)$lang_obj->name : (string)$lang_code;
+				
 				$flag_url = '';
-				if (isset($lang_obj->flag_url) && !empty($lang_obj->flag_url)) {
-					$flag_url = $lang_obj->flag_url;
-				} elseif (isset($lang_obj->flag) && !empty($lang_obj->flag)) {
-					if (preg_match('/src=["\']([^"\']+)["\']/', $lang_obj->flag, $matches)) {
-						$flag_url = $matches[1];
+				if (is_object($lang_obj)) {
+					if (isset($lang_obj->flag_url) && !empty($lang_obj->flag_url)) {
+						$flag_url = (string)$lang_obj->flag_url;
+					} elseif (isset($lang_obj->flag) && !empty($lang_obj->flag)) {
+						if (preg_match('/src=["\']([^"\']+)["\']/', $lang_obj->flag, $matches)) {
+							$flag_url = $matches[1];
+						}
 					}
 				}
 				
 				$languages[] = [
-					'code' => $lang_code,
-					'name' => $lang_obj->name ?? $lang_code,
+					'code' => $code,
+					'name' => $name,
 					'flag' => '',
 					'flag_url' => $flag_url,
-					'is_default' => $lang_code === $default_lang
+					'is_default' => $code === $default_lang
 				];
 			}
 		} catch (Exception $e) {
