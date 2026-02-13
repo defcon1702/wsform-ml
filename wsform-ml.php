@@ -44,10 +44,10 @@ final class WSForm_ML {
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-translation-manager.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-renderer.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-polylang-integration.php';
+		require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-rest-api.php';
 		
 		if (is_admin()) {
 			require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-admin-menu.php';
-			require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-rest-api.php';
 		}
 	}
 
@@ -75,10 +75,10 @@ final class WSForm_ML {
 		}
 
 		WSForm_ML_Renderer::instance();
+		WSForm_ML_REST_API::instance();
 		
 		if (is_admin()) {
 			WSForm_ML_Admin_Menu::instance();
-			WSForm_ML_REST_API::instance();
 		}
 	}
 

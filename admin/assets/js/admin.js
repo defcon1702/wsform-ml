@@ -190,7 +190,7 @@
 
 			container.innerHTML = nonDefaultLanguages.map(lang => `
 				<button class="wsform-ml-language-tab" data-lang="${lang.code}">
-					${lang.flag ? `<img src="${lang.flag}" alt="${lang.name}" style="width: 16px; height: 12px; margin-right: 5px;">` : ''}
+					${lang.flag && lang.flag !== '' ? `<img src="${lang.flag}" alt="${lang.name}" style="width: 16px; height: 12px; margin-right: 5px;">` : ''}
 					${lang.name}
 				</button>
 			`).join('');
