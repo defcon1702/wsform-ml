@@ -208,12 +208,11 @@
 			const container = document.getElementById('wsform-ml-language-tabs');
 			if (!container) return;
 
-			const nonDefaultLanguages = wsformML.languages.filter(lang => !lang.is_default);
-
-			container.innerHTML = nonDefaultLanguages.map(lang => `
+			container.innerHTML = wsformML.languages.map(lang => `
 				<button class="wsform-ml-language-tab" data-lang="${lang.code}">
 					${lang.flag_url && lang.flag_url !== '' ? `<img src="${lang.flag_url}" alt="${lang.name}" style="width: 16px; height: 12px; margin-right: 5px;">` : ''}
 					${lang.name}
+					${lang.is_default ? ' (Standard)' : ''}
 				</button>
 			`).join('');
 
@@ -224,8 +223,8 @@
 				});
 			});
 
-			if (nonDefaultLanguages.length > 0 && !this.currentLanguage) {
-				this.selectLanguage(nonDefaultLanguages[0].code);
+			if (wsformML.languages.length > 0 && !this.currentLanguage) {
+				this.selectLanguage(wsformML.languages[0].code);
 			}
 		},
 

@@ -41,8 +41,8 @@ class WSForm_ML_Renderer {
 		$this->current_language = WSForm_ML_Polylang_Integration::get_current_language();
 		error_log('WSForm ML: Current language: ' . $this->current_language);
 		
-		if (!$this->current_language || $this->current_language === WSForm_ML_Polylang_Integration::get_default_language()) {
-			error_log('WSForm ML: Skipping - is default language or no language');
+		if (!$this->current_language) {
+			error_log('WSForm ML: No current language');
 			return $form;
 		}
 
@@ -53,10 +53,13 @@ class WSForm_ML_Renderer {
 			return $form;
 		}
 
+		// Lade Übersetzungen für die aktuelle Sprache (inkl. Standard-Sprache!)
+		// So kann der User für JEDE Sprache Übersetzungen eingeben
 		$translations = $this->translation_manager->get_form_translations($form_id, $this->current_language);
-		error_log('WSForm ML: Found ' . count($translations) . ' translations');
+		error_log('WSForm ML: Found ' . count($translations) . ' translations for language: ' . $this->current_language);
 		
 		if (empty($translations)) {
+			error_log('WSForm ML: No translations found - showing original values');
 			return $form;
 		}
 
