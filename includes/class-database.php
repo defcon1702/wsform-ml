@@ -84,10 +84,39 @@ class WSForm_ML_Database {
 
 	public static function drop_tables() {
 		global $wpdb;
-		$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . self::TABLE_TRANSLATIONS);
-		$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . self::TABLE_FIELD_CACHE);
-		$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . self::TABLE_SCAN_LOG);
+		
+		$tables = [
+			$wpdb->prefix . self::TABLE_TRANSLATIONS,
+			$wpdb->prefix . self::TABLE_FIELD_CACHE,
+			$wpdb->prefix . self::TABLE_SCAN_LOG
+		];
+		
+		foreach ($tables as $table) {
+			$wpdb->query("DROP TABLE IF EXISTS $table");
+		}
+		
 		delete_option('wsform_ml_db_version');
+		delete_option('wsform_ml_auto_scan');
+		delete_option('wsform_ml_show_warnings');
+		delete_option('wsform_ml_polylang_sync');
+		
+		$wpdb->query(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE 'wsform_ml_%'"
+		);
+	}
+	
+	public static function cleanup_all_data() {
+		self::drop_tables();
+		
+		if (is_multisite()) {
+			$sites = get_sites(['fields' => 'ids']);
+			
+			foreach ($sites as $site_id) {
+				switch_to_blog($site_id);
+				self::drop_tables();
+				restore_current_blog();
+			}
+		}
 	}
 
 	public static function get_table_name($table) {
