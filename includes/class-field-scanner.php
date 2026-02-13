@@ -336,10 +336,20 @@ class WSForm_ML_Field_Scanner {
 		global $wpdb;
 		$table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_FIELD_CACHE);
 
+		$table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
+		
+		if (!$table_exists) {
+			return [];
+		}
+
 		$fields = $wpdb->get_results($wpdb->prepare(
 			"SELECT * FROM $table WHERE form_id = %d ORDER BY field_path ASC",
 			$form_id
 		));
+
+		if (empty($fields)) {
+			return [];
+		}
 
 		foreach ($fields as &$field) {
 			$field->translatable_properties = json_decode($field->translatable_properties, true);

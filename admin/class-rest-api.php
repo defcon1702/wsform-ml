@@ -134,47 +134,60 @@ class WSForm_ML_REST_API {
 	}
 
 	public function get_forms($request) {
-		if (!class_exists('WS_Form_Form')) {
-			return new WP_Error('wsform_not_found', __('WS Form nicht installiert', 'wsform-ml'), ['status' => 404]);
-		}
-
-		global $wpdb;
-		
-		$table_name = $wpdb->prefix . 'wsf_form';
-		$table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
-		
-		if (!$table_exists) {
-			return new WP_Error('wsform_table_missing', __('WS Form Datenbank-Tabelle nicht gefunden', 'wsform-ml'), ['status' => 500]);
-		}
-
-		$forms = $wpdb->get_results(
-			"SELECT id, label, date_added, date_updated FROM {$wpdb->prefix}wsf_form ORDER BY label ASC"
-		);
-
-		if ($wpdb->last_error) {
-			return new WP_Error('database_error', $wpdb->last_error, ['status' => 500]);
-		}
-
-		if (empty($forms)) {
-			return rest_ensure_response([]);
-		}
-
-		$scanner = WSForm_ML_Field_Scanner::instance();
-		$translation_manager = WSForm_ML_Translation_Manager::instance();
-
-		foreach ($forms as &$form) {
-			$cached_fields = $scanner->get_cached_fields($form->id);
-			$form->cached_fields_count = count($cached_fields);
-			$form->last_scanned = null;
-
-			if (!empty($cached_fields)) {
-				$form->last_scanned = $cached_fields[0]->last_scanned;
+		try {
+			if (!class_exists('WS_Form_Form')) {
+				return new WP_Error('wsform_not_found', __('WS Form nicht installiert', 'wsform-ml'), ['status' => 404]);
 			}
 
-			$form->translation_stats = $translation_manager->get_translation_stats($form->id);
-		}
+			global $wpdb;
+			
+			$table_name = $wpdb->prefix . 'wsf_form';
+			$table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+			
+			if (!$table_exists) {
+				return new WP_Error('wsform_table_missing', __('WS Form Datenbank-Tabelle nicht gefunden', 'wsform-ml'), ['status' => 500]);
+			}
 
-		return rest_ensure_response($forms);
+			$forms = $wpdb->get_results(
+				"SELECT id, label, date_added, date_updated FROM {$wpdb->prefix}wsf_form ORDER BY label ASC"
+			);
+
+			if ($wpdb->last_error) {
+				return new WP_Error('database_error', $wpdb->last_error, ['status' => 500]);
+			}
+
+			if (empty($forms)) {
+				return rest_ensure_response([]);
+			}
+
+			$scanner = WSForm_ML_Field_Scanner::instance();
+			$translation_manager = WSForm_ML_Translation_Manager::instance();
+
+			foreach ($forms as &$form) {
+				try {
+					$cached_fields = $scanner->get_cached_fields($form->id);
+					$form->cached_fields_count = count($cached_fields);
+					$form->last_scanned = null;
+
+					if (!empty($cached_fields)) {
+						$form->last_scanned = $cached_fields[0]->last_scanned;
+					}
+
+					$form->translation_stats = $translation_manager->get_translation_stats($form->id);
+				} catch (Exception $e) {
+					error_log('WSForm ML: Error processing form ' . $form->id . ' - ' . $e->getMessage());
+					$form->cached_fields_count = 0;
+					$form->last_scanned = null;
+					$form->translation_stats = ['total_fields' => 0, 'languages' => []];
+				}
+			}
+
+			return rest_ensure_response($forms);
+			
+		} catch (Exception $e) {
+			error_log('WSForm ML: Fatal error in get_forms - ' . $e->getMessage());
+			return new WP_Error('internal_error', $e->getMessage(), ['status' => 500]);
+		}
 	}
 
 	public function scan_form($request) {

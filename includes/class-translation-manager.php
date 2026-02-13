@@ -164,6 +164,16 @@ class WSForm_ML_Translation_Manager {
 		$cache_table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_FIELD_CACHE);
 		$trans_table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_TRANSLATIONS);
 
+		$cache_exists = $wpdb->get_var("SHOW TABLES LIKE '$cache_table'") === $cache_table;
+		$trans_exists = $wpdb->get_var("SHOW TABLES LIKE '$trans_table'") === $trans_table;
+
+		if (!$cache_exists || !$trans_exists) {
+			return [
+				'total_fields' => 0,
+				'languages' => []
+			];
+		}
+
 		$total_fields = $wpdb->get_var($wpdb->prepare(
 			"SELECT COUNT(*) FROM $cache_table WHERE form_id = %d",
 			$form_id
