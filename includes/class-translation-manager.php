@@ -186,8 +186,12 @@ class WSForm_ML_Translation_Manager {
 		];
 
 		foreach ($languages as $lang) {
-			$lang_code = $lang['code'];
-			$lang_name = $lang['name'];
+			if (!is_array($lang) || !isset($lang['code']) || !isset($lang['name'])) {
+				continue;
+			}
+			
+			$lang_code = (string)$lang['code'];
+			$lang_name = (string)$lang['name'];
 			
 			$translated_count = $wpdb->get_var($wpdb->prepare(
 				"SELECT COUNT(DISTINCT CONCAT(field_id, '-', property_type)) FROM $trans_table WHERE form_id = %d AND language_code = %s",
