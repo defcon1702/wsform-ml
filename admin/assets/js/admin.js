@@ -246,12 +246,16 @@
 					this.fetchMissingTranslations(formId, langCode)
 				]);
 
+				console.log('Loaded translations:', translations.length);
+				console.log('Missing translations:', missing.length);
+
 				this.translations[langCode] = {};
 				translations.forEach(trans => {
 					const key = `${trans.field_path}::${trans.property_type}`;
 					this.translations[langCode][key] = trans;
 				});
 
+				console.log('Calling renderFields with', this.fields.length, 'fields');
 				this.renderFields(missing);
 
 			} catch (error) {
