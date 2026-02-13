@@ -21,14 +21,21 @@ class WSForm_ML_Renderer {
 	}
 
 	private function init_hooks() {
-		add_action('ws_form_pre_render', [$this, 'translate_form'], 10, 2);
+		// WSForm Hook: wsf_pre_render - wird vor dem Rendern ALLER Formulare aufgerufen
+		// Quelle: https://wsform.com/knowledgebase/wsf_pre_render/
+		add_filter('wsf_pre_render', [$this, 'translate_form'], 10, 2);
+		
+		// Debug: Bestätige dass Renderer initialisiert wurde
+		add_action('init', function() {
+			error_log('WSForm ML: Renderer initialized - Hook registered on wsf_pre_render');
+		}, 999);
 	}
 
-	public function translate_form($form_object, $preview) {
-		error_log('WSForm ML: translate_form called - Preview: ' . ($preview ? 'yes' : 'no'));
+	public function translate_form($form, $preview = false) {
+		error_log('WSForm ML: translate_form called - Form ID: ' . ($form->id ?? 'unknown') . ' - Preview: ' . ($preview ? 'yes' : 'no'));
 		
 		if ($preview) {
-			return $form_object;
+			return $form;
 		}
 
 		$this->current_language = WSForm_ML_Polylang_Integration::get_current_language();
@@ -36,30 +43,30 @@ class WSForm_ML_Renderer {
 		
 		if (!$this->current_language || $this->current_language === WSForm_ML_Polylang_Integration::get_default_language()) {
 			error_log('WSForm ML: Skipping - is default language or no language');
-			return $form_object;
+			return $form;
 		}
 
-		$form_id = $form_object->id ?? 0;
+		$form_id = $form->id ?? 0;
 		error_log('WSForm ML: Form ID: ' . $form_id);
 		
 		if (!$form_id) {
-			return $form_object;
+			return $form;
 		}
 
 		$translations = $this->translation_manager->get_form_translations($form_id, $this->current_language);
 		error_log('WSForm ML: Found ' . count($translations) . ' translations');
 		
 		if (empty($translations)) {
-			return $form_object;
+			return $form;
 		}
 
 		$translation_map = $this->build_translation_map($translations);
 		error_log('WSForm ML: Translation map keys: ' . implode(', ', array_keys($translation_map)));
 		
-		$form_object = $this->apply_translations($form_object, $translation_map);
+		$form = $this->apply_translations($form, $translation_map);
 		error_log('WSForm ML: Translations applied');
 
-		return $form_object;
+		return $form;
 	}
 
 	private function build_translation_map($translations) {
