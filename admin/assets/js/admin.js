@@ -97,10 +97,10 @@
 				const lastScanned = form.last_scanned ? new Date(form.last_scanned).toLocaleDateString('de-DE') : '';
 
 				return `
-					<div class="wsform-ml-form-item" data-form-id="${form.id}">
+					<div class="wsform-ml-form-item" data-form-id="${String(form.id)}">
 						<div class="wsform-ml-form-item-title">${this.escapeHtml(form.label)}</div>
 						<div class="wsform-ml-form-item-meta">
-							<span>ID: ${form.id}</span>
+							<span>ID: ${String(form.id)}</span>
 							${isScanned ? `<span>${form.cached_fields_count} Felder gecacht</span>` : ''}
 							${lastScanned ? `<span>Gescannt: ${lastScanned}</span>` : ''}
 						</div>
@@ -113,7 +113,7 @@
 
 			container.querySelectorAll('.wsform-ml-form-item').forEach(item => {
 				item.addEventListener('click', (e) => {
-					const formId = parseInt(e.currentTarget.dataset.formId);
+					const formId = e.currentTarget.dataset.formId;
 					this.selectForm(formId);
 				});
 			});
@@ -126,7 +126,7 @@
 			document.querySelector(`[data-form-id="${formId}"]`)?.classList.add('active');
 
 			this.currentFormId = formId;
-			const form = this.forms.find(f => f.id === formId);
+			const form = this.forms.find(f => String(f.id) === String(formId));
 
 			if (!form) {
 				console.error('Form not found:', formId);
