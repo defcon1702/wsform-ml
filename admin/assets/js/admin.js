@@ -57,9 +57,18 @@
 				console.log('Response status:', response.status);
 
 				if (!response.ok) {
-					const errorData = await response.json().catch(() => ({}));
+					const responseText = await response.text();
+					console.error('API Error Response:', responseText);
+
+					let errorData = {};
+					try {
+						errorData = JSON.parse(responseText);
+					} catch (e) {
+						console.error('Could not parse error as JSON');
+					}
+
 					console.error('API Error:', errorData);
-					throw new Error(errorData.message || 'Failed to load forms');
+					throw new Error(errorData.message || responseText || 'Failed to load forms');
 				}
 
 				this.forms = await response.json();
