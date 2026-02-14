@@ -128,7 +128,9 @@ class WSForm_ML_Field_Scanner {
 						]
 					],
 					'has_options' => false,
-					'is_repeater' => false
+					'is_repeater' => false,
+					'parent_field_id' => null,
+					'field_structure' => null
 				];
 				error_log("WSForm ML Scanner: Found group label: {$group->label}");
 			}

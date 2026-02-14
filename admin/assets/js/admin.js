@@ -326,9 +326,6 @@
 						<span class="dashicons dashicons-yes"></span>
 						Alle Änderungen speichern
 					</button>
-					<p class="description" style="margin-top: 10px; text-align: center;">
-						Änderungen werden automatisch gespeichert. Dieser Button speichert alle Felder auf einmal.
-					</p>
 				</div>
 			`;
 
