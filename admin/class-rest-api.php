@@ -271,8 +271,13 @@ class WSForm_ML_REST_API {
 		];
 		
 		// Validiere erforderliche Felder
-		if (!$sanitized['form_id'] || empty($sanitized['field_id']) || empty($sanitized['field_path']) || 
-		    empty($sanitized['property_type']) || empty($sanitized['language_code'])) {
+		// WICHTIG: field_id kann "0" sein für Group Labels (property_type = 'group_label')
+		// Prüfe nur ob field_id gesetzt ist, nicht ob es truthy ist
+		if (!$sanitized['form_id'] || 
+		    !isset($data['field_id']) || $sanitized['field_id'] === '' || 
+		    empty($sanitized['field_path']) || 
+		    empty($sanitized['property_type']) || 
+		    empty($sanitized['language_code'])) {
 			return new WP_Error('invalid_data', __('Ungültige oder fehlende Pflichtfelder', 'wsform-ml'), ['status' => 400]);
 		}
 		
