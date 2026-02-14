@@ -101,6 +101,8 @@ Log of all scans:
 
 ## REST API Endpoints
 
+**🔒 Security:** All endpoints require `manage_options` capability (WordPress Admin only). Not accessible from outside.
+
 ```
 GET    /wp-json/wsform-ml/v1/forms
 GET    /wp-json/wsform-ml/v1/forms/{id}/fields
@@ -117,53 +119,55 @@ DELETE /wp-json/wsform-ml/v1/translations/{id}
 
 ### Actions
 ```php
-// Nach erfolgreichem Scan
+// After successful scan
 do_action('wsform_ml_after_scan', $form_id, $stats);
 
-// Nach Speichern einer Übersetzung
+// After saving a translation
 do_action('wsform_ml_translation_saved', $translation_id, $data);
 ```
 
 ### Filter
 ```php
-// Übersetzbare Eigenschaften anpassen
+// Customize translatable properties
 apply_filters('wsform_ml_translatable_properties', $properties, $field);
 
-// Translation Map vor Rendering anpassen
+// Customize translation map before rendering
 apply_filters('wsform_ml_translation_map', $map, $form_id, $language);
 ```
 
 ## Performance
 
-- **Caching**: Gescannte Felder werden gecacht
-- **Lazy Loading**: Übersetzungen nur bei Bedarf laden
-- **Batch Operations**: Bulk-Save für mehrere Übersetzungen
-- **Optimierte Queries**: Indizierte Datenbank-Abfragen
+- **Caching**: Scanned fields are cached (5-minute transient cache for forms list)
+- **Auto-Save**: Debounced auto-save (500ms) with visual indicators
+- **N+1 Query Fix**: All translations loaded in single query
+- **Batch Operations**: Bulk-save for multiple translations
+- **Optimized Queries**: Indexed database queries
+- **Lazy Loading**: Translations loaded only when needed
 
-## Polylang-Integration
+## Polylang Integration
 
-Das Plugin nutzt Polylang-Funktionen:
+The plugin uses Polylang functions:
 
 ```php
-// Aktuelle Sprache erkennen
+// Detect current language
 pll_current_language()
 
-// Standard-Sprache
+// Default language
 pll_default_language()
 
-// Verfügbare Sprachen
+// Available languages
 pll_languages_list()
 ```
 
-Funktioniert auch **ohne Polylang** (Fallback auf Englisch).
+Also works **without Polylang** (fallback to English).
 
-## Entwicklung
+## Development
 
-### Struktur
+### Structure
 ```
 wsform-ml/
-├── wsform-ml.php (Haupt-Plugin)
-├── includes/ (Core-Klassen)
+├── wsform-ml.php (Main Plugin)
+├── includes/ (Core Classes)
 │   ├── class-database.php
 │   ├── class-field-scanner.php
 │   ├── class-translation-manager.php
@@ -177,7 +181,7 @@ wsform-ml/
 └── languages/ (i18n)
 ```
 
-### Eigene Felder hinzufügen
+### Adding Custom Fields
 
 ```php
 add_filter('wsform_ml_translatable_properties', function($properties, $field) {
@@ -192,29 +196,42 @@ add_filter('wsform_ml_translatable_properties', function($properties, $field) {
 }, 10, 2);
 ```
 
-## Anforderungen
+## Requirements
 
 - WordPress 5.8+
 - PHP 7.4+
-- WS Form (beliebige Version)
+- WS Form (any version)
 - Optional: Polylang
 
 ## Support
 
-Bei Fragen oder Problemen:
+For questions or issues:
 - GitHub Issues
 - WordPress Support Forum
 
-## Lizenz
+## License
 
 GPL v2 or later
 
 ## Changelog
 
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
+
+### 1.7.0 (Latest)
+- Auto-Save with Debouncing (500ms)
+- Transient Cache for Forms List (5 min)
+- Plugin Internationalization (de_DE, en_US)
+- Visual Save Indicators
+- Performance Optimizations
+
+### 1.6.3
+- HTML Field Support
+- Numeric Field Sorting
+
 ### 1.0.0
 - Initial Release
-- Auto-Discovery für alle Feldtypen
-- Polylang-Integration
-- Backend-UI
+- Auto-Discovery for all field types
+- Polylang Integration
+- Backend UI
 - REST API
-- Warnsystem für fehlende Übersetzungen
+- Warning system for missing translations
