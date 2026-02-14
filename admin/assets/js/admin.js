@@ -392,6 +392,7 @@
 		getPropertyLabel(type) {
 			const labels = {
 				'label': 'Label',
+				'group_label': 'Tab-Name',
 				'placeholder': 'Platzhalter',
 				'help': 'Hilfetext',
 				'invalid_feedback': 'Fehlermeldung',

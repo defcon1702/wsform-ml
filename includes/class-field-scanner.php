@@ -112,6 +112,27 @@ class WSForm_ML_Field_Scanner {
 		error_log("WSForm ML Scanner: Form has " . count($form_object->groups) . " groups");
 
 		foreach ($form_object->groups as $group_index => $group) {
+			// Scanne Group Label (Tab-Name)
+			if (!empty($group->label)) {
+				$group_path = "groups.{$group_index}";
+				$fields[] = [
+					'field_id' => "group_{$group_index}",
+					'field_path' => $group_path,
+					'field_type' => 'group',
+					'field_label' => "Tab: {$group->label}",
+					'translatable_properties' => [
+						[
+							'type' => 'group_label',
+							'value' => $group->label,
+							'path' => 'label'
+						]
+					],
+					'has_options' => false,
+					'is_repeater' => false
+				];
+				error_log("WSForm ML Scanner: Found group label: {$group->label}");
+			}
+			
 			if (empty($group->sections)) {
 				continue;
 			}

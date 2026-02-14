@@ -92,6 +92,14 @@ class WSForm_ML_Renderer {
 		}
 
 		foreach ($form_object->groups as $group_index => $group) {
+			// Übersetze Group Label (Tab-Name)
+			$group_path = "groups.{$group_index}";
+			$group_label_key = "{$group_path}::group_label";
+			if (isset($translation_map[$group_label_key])) {
+				$group->label = $translation_map[$group_label_key];
+				error_log("WSForm ML: Translated group label at {$group_label_key}");
+			}
+			
 			if (empty($group->sections)) {
 				continue;
 			}
