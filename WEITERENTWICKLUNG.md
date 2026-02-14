@@ -408,43 +408,7 @@ input.addEventListener('input', () => {
 
 ---
 
-### 3.3 Version Control für Übersetzungen
-
-**Status:** 🟢 Niedrig  
-**Aufwand:** 6-8 Stunden  
-**Version:** 1.6.0
-
-**Feature:**
-Speichere Übersetzungs-Historie, ermögliche Rollback.
-
-**Schema-Änderung:**
-```sql
-ALTER TABLE wp_wsform_ml_translations 
-ADD COLUMN version INT DEFAULT 1,
-ADD COLUMN previous_value TEXT,
-ADD COLUMN changed_by BIGINT,
-ADD COLUMN changed_at DATETIME;
-
--- Neue Tabelle für Historie
-CREATE TABLE wp_wsform_ml_translation_history (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    translation_id BIGINT NOT NULL,
-    version INT NOT NULL,
-    translated_value TEXT,
-    changed_by BIGINT,
-    changed_at DATETIME,
-    INDEX idx_translation (translation_id)
-);
-```
-
-**UI:**
-- "Historie anzeigen" Button bei jedem Feld
-- Modal mit Versions-Liste
-- "Zu dieser Version zurückkehren" Button
-
----
-
-### 3.4 Multi-User Collaboration
+### 3.3 Multi-User Collaboration
 
 **Status:** 🟢 Niedrig  
 **Aufwand:** 10-12 Stunden  
@@ -570,66 +534,6 @@ class WSForm_ML_Translation_Service {
 public function save_translation($request) {
     $service = new WSForm_ML_Translation_Service();
     return $service->saveTranslation($request->get_json_params());
-}
-```
-
----
-
-## 📊 Analytics & Monitoring
-
-### 4.1 Übersetzungs-Analytics
-
-**Status:** 🟢 Niedrig  
-**Aufwand:** 4-6 Stunden  
-**Version:** 1.6.0
-
-**Features:**
-- Dashboard mit Statistiken
-- Welche Felder werden am häufigsten übersetzt?
-- Welche Sprachen sind vollständig?
-- Durchschnittliche Zeit pro Übersetzung
-- Aktivste Übersetzer
-
-**UI:**
-```
-┌─────────────────────────────────────┐
-│ Übersetzungs-Statistiken            │
-├─────────────────────────────────────┤
-│ Deutsch:   ████████████ 100% (45/45)│
-│ English:   ████████░░░░  75% (34/45)│
-│ Español:   ████░░░░░░░░  40% (18/45)│
-│                                     │
-│ Meist übersetzte Felder:            │
-│ 1. Vorname (12x)                    │
-│ 2. Nachname (12x)                   │
-│ 3. E-Mail (11x)                     │
-└─────────────────────────────────────┘
-```
-
----
-
-### 4.2 Error Tracking Integration
-
-**Status:** 🟢 Niedrig  
-**Aufwand:** 2-3 Stunden  
-**Version:** 1.6.0
-
-**Integration mit Sentry, Rollbar, etc.:**
-```php
-class WSForm_ML_Error_Handler {
-    public function init() {
-        if (defined('WSFORM_ML_SENTRY_DSN')) {
-            \Sentry\init(['dsn' => WSFORM_ML_SENTRY_DSN]);
-        }
-    }
-    
-    public function log_error($exception) {
-        if (function_exists('\\Sentry\\captureException')) {
-            \Sentry\captureException($exception);
-        }
-        
-        error_log($exception->getMessage());
-    }
 }
 ```
 
