@@ -2,9 +2,9 @@
 /**
  * Plugin Name: WSForm Multilingual
  * Plugin URI: https://github.com/yourusername/wsform-ml
- * Description: Automatische Übersetzungsverwaltung für WSForm mit Polylang-Integration. Scannt Formulare automatisch und verwaltet Übersetzungen zentral.
+ * Description: Automatische Übersetzungsverwaltung für WSForm mit Polylang-Integration. Scannt Formulare automatisch und verwaltet Übersetzungen zentral. ⚠️ WICHTIG: Vollständig mit AI entwickelt - nur auf Testumgebungen verwenden!
  * Version: 1.2.8
- * Author: Sebastian Berger
+ * Author: Sebastian Berger (AI-Generated)
  * Author URI: https://yourwebsite.com
  * Text Domain: wsform-ml
  * Domain Path: /languages
@@ -12,6 +12,13 @@
  * Requires PHP: 7.4
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * 
+ * ⚠️ AI-GENERATED CODE WARNING:
+ * This plugin was entirely developed using AI (Cascade/Claude).
+ * - Test thoroughly on staging environments before production use
+ * - Code review by a developer is strongly recommended
+ * - Always create backups before installation
+ * - Use at your own risk
  */
 
 if (!defined('ABSPATH')) {

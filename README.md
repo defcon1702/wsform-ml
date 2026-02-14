@@ -2,6 +2,17 @@
 
 Automatische Übersetzungsverwaltung für WSForm mit Polylang-Integration.
 
+## ⚠️ Wichtiger Hinweis
+
+**Dieses Plugin wurde vollständig mit AI (Cascade/Claude) entwickelt.**
+
+- ✅ **Testumgebung erforderlich**: Bitte ausschließlich auf Testumgebungen testen, bevor es produktiv eingesetzt wird
+- ✅ **Code-Review empfohlen**: Der Code sollte vor Produktiveinsatz von einem Entwickler überprüft werden
+- ✅ **Backup erstellen**: Vor Installation immer ein vollständiges Backup der WordPress-Installation erstellen
+- ✅ **Staging-Umgebung**: Idealerweise zuerst auf einer Staging-Umgebung ausführlich testen
+
+**Verwendung auf eigene Verantwortung!**
+
 ## Features
 
 ✅ **Auto-Discovery** - Automatisches Scannen aller Formularfelder
