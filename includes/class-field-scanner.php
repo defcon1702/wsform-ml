@@ -172,6 +172,12 @@ class WSForm_ML_Field_Scanner {
 		$properties = [];
 
 		error_log("WSForm ML Scanner: get_translatable_properties for field {$field->id} ({$field->type})");
+		
+		// Dumpe komplette Struktur für Options-Felder
+		if (in_array($field->type, ['checkbox', 'radio', 'select'])) {
+			error_log("WSForm ML Scanner: FULL FIELD DUMP for {$field->type} field {$field->id}:");
+			error_log(json_encode($field, JSON_PRETTY_PRINT));
+		}
 
 		if (isset($field->label) && !empty($field->label)) {
 			$properties[] = [
