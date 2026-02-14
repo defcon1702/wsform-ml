@@ -1,0 +1,38 @@
+# Development Documentation (Internal)
+VERSIONING.md
+LOGGING.md
+NATIVE-API.md
+REQUIREMENTS.md
+MIGRATION-SCRIPT.md
+
+# WordPress
+wp-config.php
+.htaccess
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+debug.log
+error_log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Node modules (if using build tools)
+node_modules/
+package-lock.json
+
+# Composer
+vendor/
+composer.lock
