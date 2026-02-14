@@ -39,6 +39,8 @@ final class WSForm_ML {
 	}
 
 	private function load_dependencies() {
+		// Core Classes
+		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-logger.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-database.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-field-scanner.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-translation-manager.php';
