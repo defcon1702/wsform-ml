@@ -17,12 +17,16 @@ class WSForm_ML_Translation_Manager {
 		global $wpdb;
 		$table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_TRANSLATIONS);
 
-		// Suche primär nach field_id (stabil!) statt field_path (instabil!)
-		// field_path ändert sich beim Hinzufügen/Entfernen von Feldern
+		// Berechne field_path_hash für eindeutige Identifikation
+		// WICHTIG: Für Options mit gleichem field_id aber unterschiedlichem field_path
+		// müssen wir auch field_path_hash prüfen, sonst überschreiben sie sich!
+		$field_path_hash = hash('sha256', $field_path);
+
 		return $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table WHERE form_id = %d AND field_id = %s AND property_type = %s AND language_code = %s",
+			"SELECT * FROM $table WHERE form_id = %d AND field_id = %s AND field_path_hash = %s AND property_type = %s AND language_code = %s",
 			$form_id,
 			$field_id,
+			$field_path_hash,
 			$property_type,
 			$language_code
 		));

@@ -201,6 +201,7 @@ class WSForm_ML_Field_Scanner {
 				'invalid_feedback' => 'invalid_feedback',
 				'text_editor' => 'text_editor',
 				'html' => 'html',
+				'html_editor' => 'html_editor', // HTML-Felder verwenden html_editor statt html
 				'aria_label' => 'aria_label',
 				// Range Slider spezifische Properties
 				'min_label' => 'min_label',
@@ -520,7 +521,7 @@ class WSForm_ML_Field_Scanner {
 		}
 
 		$fields = $wpdb->get_results($wpdb->prepare(
-			"SELECT * FROM $table WHERE form_id = %d ORDER BY field_path ASC",
+			"SELECT * FROM $table WHERE form_id = %d",
 			$form_id
 		));
 
@@ -531,6 +532,28 @@ class WSForm_ML_Field_Scanner {
 		foreach ($fields as &$field) {
 			$field->translatable_properties = json_decode($field->translatable_properties, true);
 		}
+
+		// Sortiere Felder numerisch nach field_path
+		// Vorher: groups.0.fields.10 kam vor groups.0.fields.2 (alphabetisch)
+		// Jetzt: groups.0.fields.2 kommt vor groups.0.fields.10 (numerisch)
+		usort($fields, function($a, $b) {
+			// Extrahiere Zahlen aus field_path und vergleiche numerisch
+			$a_parts = array_map('intval', preg_split('/[.]/', $a->field_path));
+			$b_parts = array_map('intval', preg_split('/[.]/', $b->field_path));
+			
+			// Vergleiche Part für Part
+			$max_parts = max(count($a_parts), count($b_parts));
+			for ($i = 0; $i < $max_parts; $i++) {
+				$a_val = $a_parts[$i] ?? 0;
+				$b_val = $b_parts[$i] ?? 0;
+				
+				if ($a_val !== $b_val) {
+					return $a_val <=> $b_val;
+				}
+			}
+			
+			return 0;
+		});
 
 		return $fields;
 	}

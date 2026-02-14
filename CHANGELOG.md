@@ -5,6 +5,62 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.6.3] - 2026-02-14
+
+### ✨ Added
+- **HTML-Felder Support**
+  - Scanner extrahiert jetzt `html_editor` Property (HTML-Feld Content)
+  - Renderer übersetzt `html_editor` im Frontend
+  - HTML-Tags bleiben erhalten beim Speichern und Rendern
+  - Betrifft: WSForm HTML-Felder (Typ: `html`)
+
+### 🔧 Fixed
+- **Numerische Sortierung der Felder im Admin UI**
+  - Vorher: Alphabetische Sortierung (fields.10 vor fields.2)
+  - Jetzt: Numerische Sortierung (fields.2 vor fields.10)
+  - Felder werden in natürlicher Reihenfolge angezeigt
+  - Implementiert via `usort()` in `get_cached_fields()`
+
+### 📝 Changed
+- `class-field-scanner.php`: `html_editor` zu `meta_properties` hinzugefügt
+- `class-renderer.php`: `html_editor` zu `meta_properties` hinzugefügt
+- `class-field-scanner.php`: Numerische Sortierung nach `field_path`
+
+## [1.6.2] - 2026-02-14
+
+### 🔧 Fixed - CRITICAL
+- **Options überschreiben sich nicht mehr beim Speichern**
+  - Problem: `get_translation()` suchte nur nach `(form_id, field_id, property_type, language_code)`
+  - Für Options mit gleichem field_id aber unterschiedlichem field_path wurden alle als "existierend" erkannt
+  - Resultat: Option 1 gespeichert → überschrieben durch Option 2 → überschrieben durch Option 3
+  - Nur die letzte Option blieb in der DB
+  - Fix: `field_path_hash` zur WHERE-Klausel hinzugefügt
+  - Jetzt: Jede Option wird einzeln identifiziert und gespeichert
+  - Betrifft: Price Radio, Price Checkbox, Price Select, normale Radio/Checkbox Options
+
+### 📝 Changed
+- `class-translation-manager.php`: `get_translation()` verwendet jetzt `field_path_hash` in WHERE-Klausel
+
+## [1.6.1] - 2026-02-14
+
+### 🔧 Fixed - CRITICAL
+- **field_id Spalte von UNSIGNED zu SIGNED geändert**
+  - Problem: `bigint unsigned` kann keine negativen Werte speichern
+  - Groups verwenden negative field_ids (-4, -6) um Kollisionen zu vermeiden
+  - MySQL konvertierte -4 → 0, -6 → 0
+  - Resultat: Alle Groups hatten field_id=0, Renderer konnte Übersetzungen nicht finden
+  - Fix: `field_id bigint NOT NULL` (SIGNED) in beiden Tabellen
+  - Betrifft: `wp_wsform_ml_translations` und `wp_wsform_ml_field_cache`
+
+### ⚠️ BREAKING CHANGE
+- **Tabellen müssen neu erstellt werden**
+  - DROP TABLE wp_wsform_ml_translations
+  - DROP TABLE wp_wsform_ml_field_cache  
+  - DROP TABLE wp_wsform_ml_scan_log
+  - Plugin deaktivieren + aktivieren
+  - Formular neu scannen
+  - Übersetzungen neu eingeben
+
 ## [1.6.0] - 2026-02-14
 
 ### Fixed

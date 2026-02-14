@@ -19,7 +19,7 @@ class WSForm_ML_Database {
 		$sql_translations = "CREATE TABLE IF NOT EXISTS $table_translations (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			form_id bigint(20) UNSIGNED NOT NULL,
-			field_id bigint(20) UNSIGNED NOT NULL,
+			field_id bigint(20) NOT NULL,
 			field_path varchar(500) NOT NULL,
 			field_path_hash char(64) NOT NULL,
 			property_type varchar(50) NOT NULL,
@@ -41,11 +41,11 @@ class WSForm_ML_Database {
 		$sql_field_cache = "CREATE TABLE IF NOT EXISTS $table_field_cache (
 			id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			form_id bigint(20) UNSIGNED NOT NULL,
-			field_id bigint(20) UNSIGNED NOT NULL,
+			field_id bigint(20) NOT NULL,
 			field_type varchar(50) NOT NULL,
 			field_path varchar(500) NOT NULL,
 			field_label varchar(255) DEFAULT NULL,
-			parent_field_id bigint(20) UNSIGNED DEFAULT NULL,
+			parent_field_id bigint(20) DEFAULT NULL,
 			is_repeater tinyint(1) DEFAULT 0,
 			has_options tinyint(1) DEFAULT 0,
 			translatable_properties text,

@@ -139,6 +139,7 @@ class WSForm_ML_Renderer {
 				'invalid_feedback',
 				'text_editor',
 				'html',
+				'html_editor', // HTML-Felder verwenden html_editor
 				'aria_label',
 				// Range Slider
 				'min_label',
