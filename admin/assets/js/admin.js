@@ -323,7 +323,7 @@
 			const globalSaveBtn = `
 				<div class="wsform-ml-global-actions">
 					<button class="button button-primary button-large wsform-ml-save-all" id="wsform-ml-save-all-btn">
-						<span class="dashicons dashicons-saved"></span>
+						<span class="dashicons dashicons-download"></span>
 						Alle Änderungen speichern
 					</button>
 				</div>
@@ -505,9 +505,9 @@
 					}
 				}
 
-				btn.innerHTML = `<span class="dashicons dashicons-saved"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
+				btn.innerHTML = `<span class="dashicons dashicons-download"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
 				setTimeout(() => {
-					btn.innerHTML = '<span class="dashicons dashicons-saved"></span> Alle Änderungen speichern';
+					btn.innerHTML = '<span class="dashicons dashicons-download"></span> Alle Änderungen speichern';
 				}, 3000);
 
 				btn.classList.remove('is-loading');
