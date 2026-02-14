@@ -80,104 +80,7 @@ Neue Klasse `WSForm_ML_Logger` mit:
 
 ---
 
-### 1.3 Translation Memory
-
-**Status:** 🔴 Hoch  
-**Aufwand:** 8-10 Stunden  
-**Version:** 1.4.0
-
-**Feature:**
-Schlage bereits übersetzte Texte vor, wenn der gleiche Quelltext in einem anderen Formular vorkommt.
-
-**Beispiel:**
-- Form A: "Vorname" → "First Name" (EN)
-- Form B: "Vorname" → **Vorschlag: "First Name"** ✨
-
-**Implementierung:**
-```php
-class WSForm_ML_Translation_Memory {
-    /**
-     * Suche nach ähnlichen Übersetzungen
-     * 
-     * @param string $source_text Original-Text
-     * @param string $language Ziel-Sprache
-     * @return array Vorschläge mit Confidence-Score
-     */
-    public function suggest_translation($source_text, $language) {
-        global $wpdb;
-        
-        // 1. Exakte Matches
-        $exact = $wpdb->get_results($wpdb->prepare(
-            "SELECT DISTINCT original_value, translated_value, COUNT(*) as usage_count
-             FROM {$wpdb->prefix}wsform_ml_translations
-             WHERE original_value = %s AND language_code = %s
-             GROUP BY translated_value
-             ORDER BY usage_count DESC
-             LIMIT 5",
-            $source_text, $language
-        ));
-        
-        // 2. Fuzzy Matches (Levenshtein-Distanz)
-        // Für ähnliche Texte wie "Vorname" vs "Vor-Name"
-        
-        return [
-            'exact' => $exact,
-            'fuzzy' => $fuzzy,
-            'confidence' => $this->calculate_confidence($exact, $fuzzy)
-        ];
-    }
-}
-```
-
-**UI-Integration:**
-- Zeige Vorschläge als Dropdown unter Übersetzungsfeld
-- "Vorschlag übernehmen" Button
-- Zeige Häufigkeit: "3x verwendet in anderen Formularen"
-
----
-
-### 1.4 Import/Export für Übersetzer
-
-**Status:** 🔴 Hoch  
-**Aufwand:** 6-8 Stunden  
-**Version:** 1.4.0
-
-**Feature:**
-Exportiere Übersetzungen als CSV/XLSX für externe Übersetzer, importiere sie zurück.
-
-**Format:**
-```csv
-Field Path,Field Type,Original (DE),English (EN),Spanish (ES),Status
-groups.0.sections.0.fields.0,label,Vorname,First Name,Nombre,translated
-groups.0.sections.0.fields.1,label,Nachname,,Apellido,partial
-groups.0.sections.0.fields.2,help,Trage Deinen Namen ein,,,missing
-```
-
-**Implementierung:**
-```php
-class WSForm_ML_Exporter {
-    public function export_to_csv($form_id, $languages) {
-        // Erstelle CSV mit allen Feldern und Übersetzungen
-    }
-    
-    public function import_from_csv($form_id, $file) {
-        // Validiere CSV
-        // Importiere Übersetzungen
-        // Zeige Zusammenfassung: X importiert, Y übersprungen, Z Fehler
-    }
-}
-```
-
-**UI:**
-- Export-Button in Settings: "Übersetzungen exportieren"
-- Import-Button mit File-Upload
-- Preview vor Import: Zeige Änderungen
-
----
-
-## 🟡 PRIORITÄT 2 - Wichtige Verbesserungen
-
-### 2.1 Plugin-Internationalisierung (i18n)
+### 1.3 Plugin-Internationalisierung (i18n)
 
 **Status:** 🟡 Mittel  
 **Aufwand:** 3-4 Stunden  
@@ -245,7 +148,7 @@ add_action('plugins_loaded', [$this, 'load_textdomain']);
 
 ---
 
-### 2.2 Input Sanitization verbessern
+### 1.4 Input Sanitization verbessern
 
 **Status:** 🟡 Mittel  
 **Aufwand:** 2-3 Stunden  
@@ -284,7 +187,9 @@ public function save_translation($request) {
 
 ---
 
-### 2.2 Transient Cache für Forms-Liste
+## 🟡 PRIORITÄT 2 - Wichtige Verbesserungen
+
+### 2.1 Transient Cache für Forms-Liste
 
 **Status:** 🟡 Mittel  
 **Aufwand:** 1-2 Stunden  
@@ -322,7 +227,7 @@ public function scan_form($request) {
 
 ---
 
-### 2.3 DB-Indizes optimieren
+### 2.2 DB-Indizes optimieren
 
 **Status:** 🟡 Mittel  
 **Aufwand:** 1 Stunde  
