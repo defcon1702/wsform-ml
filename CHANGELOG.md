@@ -5,6 +5,28 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.5] - 2026-02-14
+
+### Fixed
+- **CRITICAL: Translation Map Building verwendet jetzt korrekten Key-Typ**
+  - Problem: `build_translation_map()` verwendete immer `field_id::property_type` für alle Keys
+  - Options brauchen aber `field_path::property_type` (weil Renderer mit field_path sucht)
+  - Resultat: ALLE Options Übersetzungen wurden nicht gefunden (Checkboxen, Radios, Select, eCommerce)
+  - Lösung: Options verwenden jetzt `field_path::option`, andere Properties verwenden `field_id::property_type`
+
+### Technical Details
+- `build_translation_map()`: Unterscheidet jetzt zwischen Options und anderen Properties
+- Options: `field_path::option` (z.B. "groups.0.sections.0.fields.1.meta.data_grid_checkbox...::option")
+- Andere: `field_id::property_type` (z.B. "24::label" oder "-4::group_label")
+- Konsistent mit `translate_options()` aus v1.5.4
+
+### Migration Required
+- **Alte field_ids müssen aktualisiert werden**
+  - Problem: DB hat noch alte field_ids (0, 4, 6) statt neue (-4, -6)
+  - Lösung: Führe Migration Script aus
+  - Script: `migrate-field-ids.php?form_id=4&dry_run` (erst testen)
+  - Dann: `migrate-field-ids.php?form_id=4` (ausführen)
+
 ## [1.5.4] - 2026-02-14
 
 ### Fixed

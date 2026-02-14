@@ -67,11 +67,18 @@ class WSForm_ML_Renderer {
 		$map = [];
 
 		foreach ($translations as $translation) {
-			// WICHTIG: Verwende field_id als Key (stabil!) statt field_path (instabil!)
-			// field_path ändert sich beim Hinzufügen/Entfernen von Feldern
-			$key = $translation->field_id . '::' . $translation->property_type;
+			// WICHTIG: Options verwenden field_path als Key (weil Renderer mit field_path sucht)
+			// Alle anderen Properties verwenden field_id als Key (stabil!)
+			if ($translation->property_type === 'option') {
+				// Options: field_path::option
+				// Beispiel: "groups.0.sections.0.fields.1.meta.data_grid_checkbox_price.groups.0.rows.2.data.0::option"
+				$key = $translation->field_path . '::' . $translation->property_type;
+			} else {
+				// Normale Properties und Group Labels: field_id::property_type
+				// Beispiel: "24::label" oder "-4::group_label"
+				$key = $translation->field_id . '::' . $translation->property_type;
+			}
 			$map[$key] = $translation->translated_value;
-			
 		}
 
 		return $map;
