@@ -5,6 +5,38 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.0] - 2026-02-14
+
+### Refactoring
+- **Scanner auf WSForm native Funktionen umgestellt**
+  - Verwendet jetzt `wsf_form_get_object()` statt direktem `db_read()`
+  - Fallback für ältere WSForm Versionen implementiert
+  - Sauberer, wartbarer Code
+  - Bessere Kompatibilität mit zukünftigen WSForm-Versionen
+
+### Fixed
+- **Price Fields Scanner (price_select, price_radio, price_checkbox)**
+  - Problem: Scanner erkannte alle Spalten als übersetzbar
+  - Resultat: Value, Price, Currency wurden fälschlicherweise gescannt
+  - Lösung: Nur Spalte 0 (Label) wird jetzt gescannt
+  - Spalten 1-3 (Value, Price, Currency) werden übersprungen
+  - Verhindert Daten-Korruption bei Preis-Feldern
+
+### Changed
+- `get_form_object()`: Nutzt WSForm native API
+- `extract_options()`: Intelligente Spalten-Erkennung für Preis-Felder
+- Bessere Code-Struktur und Kommentare
+- Entfernt unnötigen Output-Buffering Code
+
+### Technical Details
+- Price Fields haben 4 Spalten:
+  * Spalte 0: Label (übersetzbar) ✅
+  * Spalte 1: Value/ID (nicht übersetzbar) ❌
+  * Spalte 2: Price (nicht übersetzbar) ❌
+  * Spalte 3: Currency (nicht übersetzbar) ❌
+- Scanner erkennt automatisch `price_*` Felder via `strpos($field->type, 'price_') === 0`
+- Fallback-Logik für ältere WSForm Versionen ohne native Funktionen
+
 ## [1.3.0] - 2026-02-14
 
 ### ⚠️ BREAKING CHANGE

@@ -59,39 +59,33 @@ class WSForm_ML_Field_Scanner {
 			throw new Exception(__('WS Form nicht installiert', 'wsform-ml'));
 		}
 
-		try {
-			// Validiere Form ID
-			if (empty($form_id) || !is_numeric($form_id)) {
-				throw new Exception(__('Ungültige Formular-ID', 'wsform-ml'));
-			}
+		// Validiere Form ID
+		if (empty($form_id) || !is_numeric($form_id)) {
+			throw new Exception(__('Ungültige Formular-ID', 'wsform-ml'));
+		}
 
-			// Buffer Output um HTML-Fehler zu fangen
-			ob_start();
-			$ws_form = new WS_Form_Form();
-			$ws_form->id = absint($form_id);
-			
-			// Prüfe ob Form existiert bevor wir sie lesen
-			global $wpdb;
-			$form_exists = $wpdb->get_var($wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}wsf_form WHERE id = %d AND status != 'trash'",
-				$form_id
-			));
-			
-			if (!$form_exists) {
-				ob_end_clean();
-				throw new Exception(__('Formular nicht gefunden oder im Papierkorb', 'wsform-ml'));
+		try {
+			// Verwende WSForm native Funktion (sauberer und wartbarer)
+			if (function_exists('wsf_form_get_object')) {
+				$form_object = wsf_form_get_object($form_id);
+			} else {
+				// Fallback für ältere WSForm Versionen
+				$ws_form = new WS_Form_Form();
+				$ws_form->id = absint($form_id);
+				$form_object = $ws_form->db_read(true, true);
 			}
-			
-			$form_object = $ws_form->db_read(true, true);
-			ob_end_clean();
 			
 			if (!$form_object || !isset($form_object->id)) {
-				throw new Exception(__('Formular konnte nicht geladen werden', 'wsform-ml'));
+				throw new Exception(__('Formular nicht gefunden oder konnte nicht geladen werden', 'wsform-ml'));
+			}
+			
+			// Prüfe ob Formular im Papierkorb ist
+			if (isset($form_object->status) && $form_object->status === 'trash') {
+				throw new Exception(__('Formular befindet sich im Papierkorb', 'wsform-ml'));
 			}
 			
 			return $form_object;
 		} catch (Exception $e) {
-			ob_end_clean();
 			throw $e;
 		}
 	}
@@ -275,25 +269,40 @@ class WSForm_ML_Field_Scanner {
 		}
 
 		$data_grid = $field->meta->{$data_grid_property};
+		
+		// Prüfe ob es ein Preis-Feld ist (price_select, price_radio, price_checkbox)
+		$is_price_field = strpos($field->type, 'price_') === 0;
 
 		foreach ($data_grid->groups as $group_index => $group) {
 			if (!isset($group->rows)) {
 				continue;
 			}
 
-
 			foreach ($group->rows as $row_index => $row) {
-				if (isset($row->data) && is_array($row->data)) {
-					foreach ($row->data as $col_index => $value) {
-						if (!empty($value)) {
-							$options[] = [
-								'type' => 'option',
-								'path' => "meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}",
-								'value' => $value,
-								'context' => "option_{$row_index}_{$col_index}"
-							];
-						}
+				if (!isset($row->data) || !is_array($row->data)) {
+					continue;
+				}
+				
+				foreach ($row->data as $col_index => $value) {
+					if (empty($value)) {
+						continue;
 					}
+					
+					// WICHTIG: Bei Preis-Feldern nur die erste Spalte (Label) übersetzen!
+					// Spalte 0: Label (übersetzbar)
+					// Spalte 1: Value/ID (nicht übersetzbar)
+					// Spalte 2: Price (nicht übersetzbar)
+					// Spalte 3: Currency (nicht übersetzbar)
+					if ($is_price_field && $col_index > 0) {
+						continue; // Überspringe Value, Price, Currency Spalten
+					}
+					
+					$options[] = [
+						'type' => 'option',
+						'path' => "meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}",
+						'value' => $value,
+						'context' => "option_{$row_index}_col{$col_index}"
+					];
 				}
 			}
 		}
