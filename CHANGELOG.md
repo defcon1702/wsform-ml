@@ -5,6 +5,16 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.1] - 2026-02-14
+
+### Fixed
+
+- **Akkordion-Layout**: Akkordions lassen sich wieder einzeln aufklappen
+  - Korrektur der CSS-Klasse von `.wsform-ml-field` zu `.wsform-ml-field-header`
+  - Event-Handler funktioniert wieder korrekt
+- **Icon**: Speicher-Button nutzt jetzt Pfeil-Icon (`dashicons-arrow-down-alt`)
+  - Statt DB-Icon nun einfacher Pfeil nach unten
+
 ## [1.2.0] - 2026-02-14
 
 ### Added

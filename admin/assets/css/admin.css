@@ -62,17 +62,17 @@
 }
 
 /* Farbliche Kennzeichnung unübersetzter Felder - Akkordion */
-.wsform-ml-field.wsform-ml-field-untranslated {
+.wsform-ml-field-header.wsform-ml-field-untranslated {
   border-left: 4px solid #f0ad4e;
   background-color: #fffbf0;
 }
 
-.wsform-ml-field.wsform-ml-field-untranslated .wsform-ml-field-title {
+.wsform-ml-field-header.wsform-ml-field-untranslated .wsform-ml-field-title {
   color: #856404;
   font-weight: 600;
 }
 
-.wsform-ml-field.wsform-ml-field-untranslated::before {
+.wsform-ml-field-header.wsform-ml-field-untranslated::before {
   content: '⚠';
   position: absolute;
   left: -20px;

@@ -327,7 +327,7 @@
 						Alle ausklappen
 					</button>
 					<button class="button button-primary button-large wsform-ml-save-all" id="wsform-ml-save-all-btn">
-						<span class="dashicons dashicons-database-export"></span>
+						<span class="dashicons dashicons-arrow-down-alt"></span>
 						Alle Änderungen speichern
 					</button>
 				</div>
@@ -347,7 +347,7 @@
 
 				return `
 						<div class="wsform-ml-field-group">
-							<div class="wsform-ml-field${untranslatedClass}" data-field-id="${field.field_id}">
+							<div class="wsform-ml-field-header${untranslatedClass}" data-field-id="${field.field_id}">
 								<div>
 									<div class="wsform-ml-field-title">
 										${this.escapeHtml(field.field_label || `Field ${field.field_id}`)}
@@ -542,9 +542,9 @@
 					}
 				}
 
-				btn.innerHTML = `<span class="dashicons dashicons-database-export"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
+				btn.innerHTML = `<span class="dashicons dashicons-arrow-down-alt"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
 				setTimeout(() => {
-					btn.innerHTML = '<span class="dashicons dashicons-database-export"></span> Alle Änderungen speichern';
+					btn.innerHTML = '<span class="dashicons dashicons-arrow-down-alt"></span> Alle Änderungen speichern';
 				}, 3000);
 
 				btn.classList.remove('is-loading');
