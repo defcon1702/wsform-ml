@@ -170,8 +170,8 @@ class WSForm_ML_Renderer {
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
 					foreach ($row->data as $col_index => $value) {
-						// Prüfe Key mit field-type-spezifischer data_grid Property
-						$key = "{$field_path}::meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}";
+						// Key-Format aus Admin: groups.0.sections.0.fields.9.meta.data_grid_select.groups.0.rows.0.data.0::option
+						$key = "{$field_path}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
 						
 						if (isset($translation_map[$key])) {
 							$row->data[$col_index] = $translation_map[$key];
