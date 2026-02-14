@@ -135,6 +135,17 @@ class WSForm_ML_REST_API {
 
 	public function get_forms($request) {
 		try {
+			// Prüfe Cache (5 Minuten TTL)
+			$cache_key = 'wsform_ml_forms_list_v1';
+			$refresh = isset($_GET['refresh']) && $_GET['refresh'] === '1';
+			
+			if (!$refresh) {
+				$cached = get_transient($cache_key);
+				if ($cached !== false) {
+					return rest_ensure_response($cached);
+				}
+			}
+
 			if (!class_exists('WS_Form_Form')) {
 				return new WP_Error('wsform_not_found', __('WS Form nicht installiert', 'wsform-ml'), ['status' => 404]);
 			}
@@ -182,6 +193,9 @@ class WSForm_ML_REST_API {
 				}
 			}
 
+			// Speichere im Cache (5 Minuten)
+			set_transient($cache_key, $forms, 5 * MINUTE_IN_SECONDS);
+
 			return rest_ensure_response($forms);
 			
 		} catch (Exception $e) {
@@ -207,6 +221,9 @@ class WSForm_ML_REST_API {
 			ob_end_clean();
 
 			if ($result['success']) {
+				// Invalidiere Forms-Liste Cache nach erfolgreichem Scan
+				delete_transient('wsform_ml_forms_list_v1');
+				
 				return rest_ensure_response($result);
 			} else {
 				return new WP_Error('scan_failed', $result['error'], ['status' => 500]);

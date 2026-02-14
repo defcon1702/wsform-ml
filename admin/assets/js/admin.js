@@ -7,6 +7,7 @@
 		forms: [],
 		fields: [],
 		translations: {},
+		saveTimeouts: new Map(), // Debouncing: Speichere Timeouts pro Feld
 
 		init() {
 			this.renderLanguages();
@@ -438,6 +439,113 @@
 			}
 		},
 
+		/**
+		 * Auto-Save mit Debouncing
+		 * Speichert automatisch nach 500ms Inaktivität
+		 */
+		autoSaveTranslation(textarea) {
+			const key = `${textarea.dataset.fieldPath}::${textarea.dataset.propertyType}`;
+
+			// Lösche vorherigen Timeout für dieses Feld
+			if (this.saveTimeouts.has(key)) {
+				clearTimeout(this.saveTimeouts.get(key));
+			}
+
+			// Zeige "Speichert..." Indikator
+			this.showSavingIndicator(textarea, 'saving');
+
+			// Setze neuen Timeout (500ms Debounce)
+			const timeout = setTimeout(async () => {
+				await this.saveTranslation(textarea);
+				this.saveTimeouts.delete(key);
+			}, 500);
+
+			this.saveTimeouts.set(key, timeout);
+		},
+
+		/**
+		 * Speichere einzelne Übersetzung
+		 */
+		async saveTranslation(textarea) {
+			const data = {
+				form_id: parseInt(textarea.dataset.formId),
+				field_id: textarea.dataset.fieldId,
+				field_path: textarea.dataset.fieldPath,
+				property_type: textarea.dataset.propertyType,
+				language_code: this.currentLanguage,
+				original_value: textarea.dataset.original,
+				translated_value: textarea.value
+			};
+
+			try {
+				const response = await fetch(`${wsformML.restUrl}/translations`, {
+					method: 'POST',
+					headers: {
+						'X-WP-Nonce': wsformML.nonce,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				});
+
+				if (!response.ok) throw new Error('Save failed');
+
+				// Zeige "Gespeichert" Indikator
+				this.showSavingIndicator(textarea, 'saved');
+
+				// Update Translation Map
+				const key = `${data.field_path}::${data.property_type}`;
+				if (!this.translations[this.currentLanguage]) {
+					this.translations[this.currentLanguage] = {};
+				}
+				this.translations[this.currentLanguage][key] = {
+					...this.translations[this.currentLanguage][key],
+					translated_value: data.translated_value
+				};
+
+			} catch (error) {
+				console.error('Auto-save error:', error);
+				this.showSavingIndicator(textarea, 'error');
+			}
+		},
+
+		/**
+		 * Zeige Speicher-Status Indikator
+		 */
+		showSavingIndicator(textarea, status) {
+			// Entferne vorherige Indikatoren
+			const parent = textarea.parentElement;
+			const oldIndicator = parent.querySelector('.wsform-ml-save-indicator');
+			if (oldIndicator) {
+				oldIndicator.remove();
+			}
+
+			// Erstelle neuen Indikator
+			const indicator = document.createElement('span');
+			indicator.className = `wsform-ml-save-indicator ${status}`;
+
+			const icons = {
+				'saving': '⏳',
+				'saved': '✓',
+				'error': '✗'
+			};
+
+			const texts = {
+				'saving': 'Speichert...',
+				'saved': 'Gespeichert',
+				'error': 'Fehler'
+			};
+
+			indicator.innerHTML = `${icons[status]} ${texts[status]}`;
+			parent.appendChild(indicator);
+
+			// Entferne "Gespeichert" nach 2 Sekunden
+			if (status === 'saved') {
+				setTimeout(() => {
+					indicator.remove();
+				}, 2000);
+			}
+		},
+
 		escapeHtml(text) {
 			const div = document.createElement('div');
 			div.textContent = text;
@@ -449,6 +557,13 @@
 		WSFormML.init();
 
 		const container = document.getElementById('wsform-ml-fields-container');
+
+		// Auto-Save beim Tippen (Event Delegation)
+		container.addEventListener('input', (e) => {
+			if (e.target.classList.contains('wsform-ml-translation-input')) {
+				WSFormML.autoSaveTranslation(e.target);
+			}
+		});
 
 		// Event Delegation für alle Buttons
 		container.addEventListener('click', async (e) => {

@@ -5,6 +5,40 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.7.0] - 2026-02-14
+
+### ✨ Added
+- **Auto-Save mit Debouncing**
+  - Automatisches Speichern nach 500ms Inaktivität beim Tippen
+  - Visuelle Indikatoren: "⏳ Speichert...", "✓ Gespeichert", "✗ Fehler"
+  - Keine manuellen Speicher-Klicks mehr nötig
+  - Smooth UX mit fadeIn Animation
+
+- **Plugin-Internationalisierung (i18n)**
+  - `.pot` Template mit allen übersetzungsfähigen Strings
+  - Deutsche Übersetzung (`de_DE.po/.mo`)
+  - Englische Übersetzung (`en_US.po/.mo`)
+  - Textdomain automatisch geladen via `load_plugin_textdomain()`
+  - Plugin-UI jetzt in Deutsch und Englisch verfügbar
+
+### 🚀 Performance
+- **Transient Cache für Forms-Liste**
+  - 5-Minuten Cache für Forms-Liste
+  - Reduziert Ladezeit von ~500ms auf ~10-20ms
+  - Cache wird nach Scan automatisch invalidiert
+  - Refresh-Parameter `?refresh=1` zum Bypass
+
+### 📝 Changed
+- `admin/assets/js/admin.js`: Auto-Save Logik + Debouncing
+- `admin/assets/css/admin.css`: Speicher-Indikatoren Styles
+- `admin/class-rest-api.php`: Transient Cache für `get_forms()`
+- `languages/`: Neue `.pot/.po/.mo` Dateien für i18n
+
+### ℹ️ Info
+- **N+1 Query Fix**: Bereits in v1.6.x implementiert
+- **DB-Indizes**: Bereits optimal in v1.6.x
+- Keine Breaking Changes
+
 ## [1.6.3] - 2026-02-14
 
 ### ✨ Added

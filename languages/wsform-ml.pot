@@ -1,0 +1,201 @@
+# Copyright (C) 2026 WSForm Multilingual
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WSForm Multilingual 1.6.3\n"
+"Report-Msgid-Bugs-To: https://github.com/defcon1702/wsform-ml/issues\n"
+"POT-Creation-Date: 2026-02-14 20:10+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Sebastian Berger <https://github.com/defcon1702>\n"
+
+#: admin/class-admin-menu.php:23
+#: admin/views/admin-page.php:8
+msgid "WSForm Multilingual"
+msgstr ""
+
+#: admin/class-admin-menu.php:24
+msgid "WSForm ML"
+msgstr ""
+
+#: admin/class-admin-menu.php:34
+#: admin/class-admin-menu.php:35
+#: admin/views/admin-page.php:20
+msgid "Formulare"
+msgstr ""
+
+#: admin/class-admin-menu.php:43
+#: admin/class-admin-menu.php:44
+msgid "Einstellungen"
+msgstr ""
+
+#: admin/class-admin-menu.php:79
+#: admin/views/admin-page.php:60
+msgid "Formular scannen"
+msgstr ""
+
+#: admin/class-admin-menu.php:80
+msgid "Scanne..."
+msgstr ""
+
+#: admin/class-admin-menu.php:81
+msgid "Scan abgeschlossen"
+msgstr ""
+
+#: admin/class-admin-menu.php:82
+msgid "Fehler beim Scannen"
+msgstr ""
+
+#: admin/class-admin-menu.php:83
+msgid "Speichern"
+msgstr ""
+
+#: admin/class-admin-menu.php:84
+msgid "Speichere..."
+msgstr ""
+
+#: admin/class-admin-menu.php:85
+msgid "Gespeichert"
+msgstr ""
+
+#: admin/class-admin-menu.php:86
+msgid "Fehlende Übersetzungen"
+msgstr ""
+
+#: admin/class-admin-menu.php:87
+msgid "Möchten Sie diese Übersetzung wirklich löschen?"
+msgstr ""
+
+#: admin/class-rest-api.php:150
+#: admin/class-rest-api.php:210
+msgid "WS Form nicht installiert"
+msgstr ""
+
+#: admin/class-rest-api.php:159
+msgid "WS Form Datenbank-Tabelle nicht gefunden"
+msgstr ""
+
+#: admin/class-rest-api.php:298
+msgid "Ungültige oder fehlende Pflichtfelder"
+msgstr ""
+
+#: admin/class-rest-api.php:303
+msgid "Ungültiger Sprachcode"
+msgstr ""
+
+#: admin/class-rest-api.php:319
+msgid "Ungültige Daten"
+msgstr ""
+
+#: admin/class-rest-api.php:337
+msgid "Löschen fehlgeschlagen"
+msgstr ""
+
+#: admin/views/admin-page.php:12
+msgid "Verfügbare Sprachen:"
+msgstr ""
+
+#: admin/views/admin-page.php:22
+msgid "Lade Formulare..."
+msgstr ""
+
+#: admin/views/admin-page.php:33
+msgid "Willkommen bei WSForm Multilingual"
+msgstr ""
+
+#: admin/views/admin-page.php:34
+msgid "Wählen Sie ein Formular aus der Liste, um mit der Übersetzung zu beginnen."
+msgstr ""
+
+#: admin/views/admin-page.php:38
+msgid "Auto-Discovery"
+msgstr ""
+
+#: admin/views/admin-page.php:39
+msgid "Automatisches Scannen aller Formularfelder"
+msgstr ""
+
+#: admin/views/admin-page.php:43
+msgid "Komplexe Formulare"
+msgstr ""
+
+#: admin/views/admin-page.php:44
+msgid "Support für Repeater, Conditional Logic, Select-Optionen"
+msgstr ""
+
+#: admin/views/admin-page.php:48
+msgid "Warnungen"
+msgstr ""
+
+#: admin/views/admin-page.php:49
+msgid "Automatische Erkennung fehlender Übersetzungen"
+msgstr ""
+
+#: admin/views/admin-page.php:68
+msgid "Übersetzungsstatistik"
+msgstr ""
+
+#: admin/views/admin-page.php:74
+msgid "Übersetzungen"
+msgstr ""
+
+#: admin/views/admin-page.php:79
+msgid "Fehlende Übersetzungen für"
+msgstr ""
+
+#: admin/views/settings-page.php:13
+msgid "Einstellungen gespeichert."
+msgstr ""
+
+#: admin/views/settings-page.php:22
+msgid "WSForm Multilingual - Einstellungen"
+msgstr ""
+
+#: admin/views/settings-page.php:30
+msgid "Automatisches Scannen"
+msgstr ""
+
+#: admin/views/settings-page.php:34
+msgid "Formulare automatisch beim Speichern scannen"
+msgstr ""
+
+#: admin/views/settings-page.php:39
+msgid "Warnungen anzeigen"
+msgstr ""
+
+#: admin/views/settings-page.php:43
+msgid "Warnungen für fehlende Übersetzungen anzeigen"
+msgstr ""
+
+#: admin/views/settings-page.php:48
+msgid "Polylang Synchronisation"
+msgstr ""
+
+#: admin/views/settings-page.php:52
+msgid "Übersetzungen mit Polylang String-Übersetzungen synchronisieren"
+msgstr ""
+
+#: admin/views/settings-page.php:58
+msgid "Einstellungen speichern"
+msgstr ""
+
+#: includes/class-field-scanner.php:29
+msgid "Formular nicht gefunden"
+msgstr ""
+
+#: includes/class-field-scanner.php:59
+msgid "WS Form nicht installiert"
+msgstr ""
+
+#: includes/class-field-scanner.php:64
+msgid "Ungültige Formular-ID"
+msgstr ""
+
+#: includes/class-field-scanner.php:79
+msgid "Formular nicht gefunden oder konnte nicht geladen werden"
+msgstr ""
+
+#: includes/class-field-scanner.php:84
+msgid "Formular befindet sich im Papierkorb"
+msgstr ""
