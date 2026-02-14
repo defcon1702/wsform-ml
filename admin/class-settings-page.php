@@ -27,6 +27,8 @@ class WSForm_ML_Settings_Page {
 		
 		// Menü wird bereits in class-admin-menu.php registriert
 		add_action('admin_post_wsform_ml_toggle_feature', [$this, 'handle_feature_toggle']);
+		add_action('admin_post_wsform_ml_create_language_field', [$this, 'handle_create_language_field']);
+		add_action('admin_post_wsform_ml_remove_language_field', [$this, 'handle_remove_language_field']);
 	}
 
 	/**
@@ -38,6 +40,9 @@ class WSForm_ML_Settings_Page {
 		}
 
 		$features = $this->feature_manager->get_all_features();
+		$language_field_manager = WSForm_ML_Language_Field_Manager::instance();
+		$available_forms = $language_field_manager->get_available_forms();
+		$configured_fields = $language_field_manager->get_configured_fields();
 		?>
 		<div class="wrap wsform-ml-settings">
 			<h1><?php _e('WSForm Multilingual - Einstellungen', 'wsform-ml'); ?></h1>
@@ -45,6 +50,24 @@ class WSForm_ML_Settings_Page {
 			<?php if (isset($_GET['updated'])): ?>
 				<div class="notice notice-success is-dismissible">
 					<p><?php _e('Einstellungen gespeichert.', 'wsform-ml'); ?></p>
+				</div>
+			<?php endif; ?>
+
+			<?php if (isset($_GET['field_created'])): ?>
+				<div class="notice notice-success is-dismissible">
+					<p><?php printf(__('Sprachfeld erfolgreich erstellt (Field ID: %d)', 'wsform-ml'), intval($_GET['field_id'])); ?></p>
+				</div>
+			<?php endif; ?>
+
+			<?php if (isset($_GET['field_removed'])): ?>
+				<div class="notice notice-success is-dismissible">
+					<p><?php _e('Sprachfeld-Konfiguration entfernt.', 'wsform-ml'); ?></p>
+				</div>
+			<?php endif; ?>
+
+			<?php if (isset($_GET['error'])): ?>
+				<div class="notice notice-error is-dismissible">
+					<p><?php echo esc_html(urldecode($_GET['error'])); ?></p>
 				</div>
 			<?php endif; ?>
 
@@ -122,6 +145,108 @@ class WSForm_ML_Settings_Page {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+
+				<!-- Language Field Integration -->
+				<h2 style="margin-top: 40px;"><?php _e('Sprachfeld-Integration', 'wsform-ml'); ?></h2>
+				
+				<div class="wsform-ml-info-box warning">
+					<h4><span class="dashicons dashicons-warning"></span> <?php _e('Wichtiger Hinweis zu Polylang AJAX', 'wsform-ml'); ?></h4>
+					<p>
+						<?php _e('Diese Funktion setzt den Sprachcode beim Rendern des Formulars. Sie funktioniert nur, wenn Polylang <strong>OHNE AJAX</strong> konfiguriert ist (Standard-Einstellung mit Page Reload).', 'wsform-ml'); ?>
+					</p>
+					<p>
+						<?php _e('Bei aktiviertem AJAX-Sprachwechsel wird das Formular nicht neu geladen und der Wert kann nicht serverseitig aktualisiert werden.', 'wsform-ml'); ?>
+					</p>
+				</div>
+
+				<div class="wsform-ml-info-box">
+					<h4><?php _e('Sprachfeld zu Formular hinzufügen', 'wsform-ml'); ?></h4>
+					<p><?php _e('Erstellt ein Hidden Field im ausgewählten Formular, das automatisch mit dem aktuellen Sprachcode befüllt wird (z.B. "de", "en", "fr").', 'wsform-ml'); ?></p>
+					<p><?php _e('Das Field ist im WSForm Admin sichtbar und kann für Conditions und Actions verwendet werden.', 'wsform-ml'); ?></p>
+
+					<form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="margin-top: 20px;">
+						<?php wp_nonce_field('wsform_ml_create_language_field', 'wsform_ml_nonce'); ?>
+						<input type="hidden" name="action" value="wsform_ml_create_language_field">
+						
+						<table class="form-table">
+							<tr>
+								<th scope="row">
+									<label for="form_id"><?php _e('Formular auswählen', 'wsform-ml'); ?></label>
+								</th>
+								<td>
+									<select name="form_id" id="form_id" class="regular-text" required>
+										<option value=""><?php _e('-- Formular wählen --', 'wsform-ml'); ?></option>
+										<?php foreach ($available_forms as $form): ?>
+											<?php 
+												$has_field = $language_field_manager->form_has_language_field($form->id);
+												$disabled = $has_field ? 'disabled' : '';
+												$label_suffix = $has_field ? ' (' . __('bereits konfiguriert', 'wsform-ml') . ')' : '';
+											?>
+											<option value="<?php echo esc_attr($form->id); ?>" <?php echo $disabled; ?>>
+												<?php echo esc_html($form->label . $label_suffix); ?>
+											</option>
+										<?php endforeach; ?>
+									</select>
+									<p class="description">
+										<?php _e('Wählen Sie das Formular, zu dem ein Sprachfeld hinzugefügt werden soll.', 'wsform-ml'); ?>
+									</p>
+								</td>
+							</tr>
+						</table>
+
+						<p class="submit">
+							<button type="submit" class="button button-primary">
+								<span class="dashicons dashicons-plus-alt"></span>
+								<?php _e('Sprachfeld erstellen', 'wsform-ml'); ?>
+							</button>
+						</p>
+					</form>
+				</div>
+
+				<?php if (!empty($configured_fields)): ?>
+					<div class="wsform-ml-info-box">
+						<h4><?php _e('Konfigurierte Sprachfelder', 'wsform-ml'); ?></h4>
+						<table class="wp-list-table widefat fixed striped">
+							<thead>
+								<tr>
+									<th><?php _e('Formular', 'wsform-ml'); ?></th>
+									<th><?php _e('Field ID', 'wsform-ml'); ?></th>
+									<th><?php _e('Aktion', 'wsform-ml'); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ($configured_fields as $form_id => $field_id): ?>
+									<?php 
+										$form_name = '';
+										foreach ($available_forms as $form) {
+											if ($form->id == $form_id) {
+												$form_name = $form->label;
+												break;
+											}
+										}
+									?>
+									<tr>
+										<td><strong><?php echo esc_html($form_name ?: "Form #{$form_id}"); ?></strong></td>
+										<td><code><?php echo esc_html($field_id); ?></code></td>
+										<td>
+											<form method="post" action="<?php echo admin_url('admin-post.php'); ?>" style="display: inline;">
+												<?php wp_nonce_field('wsform_ml_remove_language_field', 'wsform_ml_nonce'); ?>
+												<input type="hidden" name="action" value="wsform_ml_remove_language_field">
+												<input type="hidden" name="form_id" value="<?php echo esc_attr($form_id); ?>">
+												<button type="submit" class="button button-small" onclick="return confirm('<?php _e('Konfiguration wirklich entfernen?', 'wsform-ml'); ?>');">
+													<?php _e('Entfernen', 'wsform-ml'); ?>
+												</button>
+											</form>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+						<p class="description" style="margin-top: 10px;">
+							<?php _e('Hinweis: Das Entfernen der Konfiguration löscht nicht das Field im Formular, sondern nur die Verknüpfung.', 'wsform-ml'); ?>
+						</p>
+					</div>
+				<?php endif; ?>
 
 				<div class="wsform-ml-settings-info">
 					<h3><?php _e('Feature-Beschreibungen', 'wsform-ml'); ?></h3>
@@ -232,6 +357,69 @@ class WSForm_ML_Settings_Page {
 
 		wp_redirect(add_query_arg(
 			['page' => 'wsform-ml-settings', 'updated' => '1'],
+			admin_url('admin.php')
+		));
+		exit;
+	}
+
+	/**
+	 * Handle Language Field Creation
+	 */
+	public function handle_create_language_field() {
+		if (!current_user_can('manage_options')) {
+			wp_die(__('Keine Berechtigung', 'wsform-ml'));
+		}
+
+		check_admin_referer('wsform_ml_create_language_field', 'wsform_ml_nonce');
+
+		$form_id = absint($_POST['form_id']);
+		
+		if (!$form_id) {
+			wp_redirect(add_query_arg(
+				['page' => 'wsform-ml-settings', 'error' => urlencode(__('Ungültige Form ID', 'wsform-ml'))],
+				admin_url('admin.php')
+			));
+			exit;
+		}
+
+		$language_field_manager = WSForm_ML_Language_Field_Manager::instance();
+		$result = $language_field_manager->create_language_field($form_id);
+
+		if ($result['success']) {
+			wp_redirect(add_query_arg(
+				[
+					'page' => 'wsform-ml-settings',
+					'field_created' => '1',
+					'field_id' => $result['field_id']
+				],
+				admin_url('admin.php')
+			));
+		} else {
+			wp_redirect(add_query_arg(
+				['page' => 'wsform-ml-settings', 'error' => urlencode($result['error'])],
+				admin_url('admin.php')
+			));
+		}
+		exit;
+	}
+
+	/**
+	 * Handle Language Field Removal
+	 */
+	public function handle_remove_language_field() {
+		if (!current_user_can('manage_options')) {
+			wp_die(__('Keine Berechtigung', 'wsform-ml'));
+		}
+
+		check_admin_referer('wsform_ml_remove_language_field', 'wsform_ml_nonce');
+
+		$form_id = absint($_POST['form_id']);
+		
+		$language_field_manager = WSForm_ML_Language_Field_Manager::instance();
+		$language_field_manager->remove_field_config($form_id);
+
+		wp_redirect(add_query_arg(
+			['page' => 'wsform-ml-settings', 'field_removed' => '1'],
 			admin_url('admin.php')
 		));
 		exit;

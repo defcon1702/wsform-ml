@@ -44,6 +44,7 @@ final class WSForm_ML {
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-translation-manager.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-renderer.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-polylang-integration.php';
+		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-language-field-manager.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-rest-api.php';
 		
 		// Feature Management & Native API
@@ -89,6 +90,9 @@ final class WSForm_ML {
 		
 		// Initialisiere Native Adapter (prüft selbst ob aktiviert)
 		WSForm_ML_Native_Adapter::instance();
+		
+		// Initialisiere Language Field Manager (für Sprachfeld-Integration)
+		WSForm_ML_Language_Field_Manager::instance();
 		
 		// REST API immer initialisieren
 		WSForm_ML_REST_API::instance();
