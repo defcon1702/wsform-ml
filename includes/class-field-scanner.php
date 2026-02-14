@@ -14,6 +14,8 @@ class WSForm_ML_Field_Scanner {
 	}
 
 	public function scan_form($form_id) {
+		error_log("WSForm ML Scanner: ===== SCAN START for Form {$form_id} =====");
+		
 		$start_time = microtime(true);
 		$stats = [
 			'fields_found' => 0,
@@ -23,13 +25,16 @@ class WSForm_ML_Field_Scanner {
 		];
 
 		try {
+			error_log("WSForm ML Scanner: Getting form object...");
 			$form_object = $this->get_form_object($form_id);
 			if (!$form_object) {
 				throw new Exception(__('Formular nicht gefunden', 'wsform-ml'));
 			}
 
+			error_log("WSForm ML Scanner: Form object loaded, discovering fields...");
 			$discovered_fields = $this->discover_fields($form_object);
 			$stats['fields_found'] = count($discovered_fields);
+			error_log("WSForm ML Scanner: Discovered {$stats['fields_found']} fields");
 
 			$this->sync_fields_to_cache($form_id, $discovered_fields, $stats);
 			
@@ -100,25 +105,35 @@ class WSForm_ML_Field_Scanner {
 		$fields = [];
 
 		if (empty($form_object->groups)) {
+			error_log("WSForm ML Scanner: No groups in form object");
 			return $fields;
 		}
+
+		error_log("WSForm ML Scanner: Form has " . count($form_object->groups) . " groups");
 
 		foreach ($form_object->groups as $group_index => $group) {
 			if (empty($group->sections)) {
 				continue;
 			}
 
+			error_log("WSForm ML Scanner: Group {$group_index} has " . count($group->sections) . " sections");
+
 			foreach ($group->sections as $section_index => $section) {
 				if (empty($section->fields)) {
 					continue;
 				}
 
+				error_log("WSForm ML Scanner: Section {$section_index} has " . count($section->fields) . " fields");
+
 				foreach ($section->fields as $field_index => $field) {
 					$field_path = $parent_path ? "{$parent_path}.fields.{$field_index}" : "groups.{$group_index}.sections.{$section_index}.fields.{$field_index}";
+					
+					error_log("WSForm ML Scanner: Processing field {$field->id} at {$field_path}");
 					
 					$field_data = $this->extract_field_data($field, $field_path, $parent_id);
 					if ($field_data) {
 						$fields[] = $field_data;
+						error_log("WSForm ML Scanner: Field {$field->id} extracted with " . count($field_data['translatable_properties']) . " properties");
 
 						if ($this->is_repeater_field($field)) {
 							$repeater_fields = $this->scan_repeater_fields($field, $field_path, $field->id);
