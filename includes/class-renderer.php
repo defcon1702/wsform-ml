@@ -173,12 +173,13 @@ class WSForm_ML_Renderer {
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
 					foreach ($row->data as $col_index => $value) {
-					// Verwende field_id für Options
-					// Format: field_id.meta.data_grid_TYPE.groups.X.rows.Y.data.Z::option
-					$key = "{$field_id}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
-					
-					if (isset($translation_map[$key])) {
-						$row->data[$col_index] = $translation_map[$key];
+						// Verwende field_id für Options
+						// Format: field_id.meta.data_grid_TYPE.groups.X.rows.Y.data.Z::option
+						$key = "{$field_id}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
+						
+						if (isset($translation_map[$key])) {
+							$row->data[$col_index] = $translation_map[$key];
+						}
 					}
 				}
 			}
