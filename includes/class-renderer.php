@@ -83,10 +83,15 @@ class WSForm_ML_Renderer {
 		}
 
 		foreach ($form_object->groups as $group_index => $group) {
-			// Übersetze Group Label (Tab-Name) - Groups haben keine field_id, nutze group_index
-			$group_label_key = "group_{$group_index}::group_label";
-			if (isset($translation_map[$group_label_key])) {
-				$group->label = $translation_map[$group_label_key];
+			// Übersetze Group Label (Tab-Name)
+			// WICHTIG: Verwende group->id (WSForm's echte Group ID) statt group_index!
+			// Scanner speichert mit group->id als field_id (z.B. 4, 6)
+			// Translation Map Key: "{field_id}::{property_type}" → "4::group_label"
+			if (isset($group->id)) {
+				$group_label_key = "{$group->id}::group_label";
+				if (isset($translation_map[$group_label_key])) {
+					$group->label = $translation_map[$group_label_key];
+				}
 			}
 			
 			if (empty($group->sections)) {
@@ -151,7 +156,9 @@ class WSForm_ML_Renderer {
 			}
 
 			// Prüfe field-type-spezifische data_grid Properties
-			$data_grid_property = 'data_grid_' . ($field->type ?? '');
+			// WICHTIG: Preis-Felder haben spezielle Namenskonvention!
+			// price_checkbox → data_grid_checkbox_price (NICHT data_grid_price_checkbox!)
+			$data_grid_property = $this->get_data_grid_property($field->type ?? '');
 			if (isset($field->meta->{$data_grid_property}->groups)) {
 				$this->translate_options($field, $field_id, $translation_map, $data_grid_property);
 			}
@@ -197,5 +204,29 @@ class WSForm_ML_Renderer {
 				$this->translate_field($repeater_field, $translation_map);
 			}
 		}
+	}
+
+	/**
+	 * Bestimmt den korrekten data_grid Property-Namen für einen Field-Type
+	 * 
+	 * WSForm nutzt unterschiedliche Namenskonventionen:
+	 * - Standard-Felder: data_grid_[type] (z.B. data_grid_checkbox)
+	 * - Preis-Felder: data_grid_[base]_price (z.B. data_grid_checkbox_price)
+	 * 
+	 * @param string $field_type Der Field-Type (z.B. 'checkbox', 'price_checkbox')
+	 * @return string Der data_grid Property-Name
+	 */
+	private function get_data_grid_property($field_type) {
+		// Preis-Felder haben spezielle Namenskonvention
+		// price_checkbox → data_grid_checkbox_price (NICHT data_grid_price_checkbox!)
+		// price_radio → data_grid_radio_price
+		// price_select → data_grid_select_price
+		if (strpos($field_type, 'price_') === 0) {
+			$base_type = substr($field_type, 6); // Entferne "price_" Präfix
+			return 'data_grid_' . $base_type . '_price';
+		}
+		
+		// Standard-Felder: data_grid_[type]
+		return 'data_grid_' . $field_type;
 	}
 }

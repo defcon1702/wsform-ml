@@ -5,6 +5,29 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.2] - 2026-02-14
+
+### Fixed
+- **CRITICAL: Tab-Übersetzungen werden jetzt im Frontend ausgespielt**
+  - Problem: Renderer verwendete `group_index` statt `group->id` für Translation Lookup
+  - Translation Map Key: `"group_0::group_label"` ❌
+  - Sollte sein: `"4::group_label"` (group->id) ✅
+  - Resultat: Tab-Übersetzungen wurden nicht gefunden
+  - Lösung: Renderer verwendet jetzt `group->id` wie Scanner
+
+- **CRITICAL: Preis-Feld Übersetzungen werden jetzt im Frontend ausgespielt**
+  - Problem: Renderer verwendete falsche `data_grid` Property-Namen
+  - `price_checkbox` → Renderer suchte `data_grid_price_checkbox` ❌
+  - Sollte sein: `data_grid_checkbox_price` ✅
+  - Resultat: Preis-Feld Optionen wurden nicht übersetzt
+  - Lösung: Renderer verwendet jetzt `get_data_grid_property()` wie Scanner
+
+### Technical Details
+- Renderer: `apply_translations()` verwendet jetzt `group->id` statt `group_index`
+- Renderer: `translate_field()` verwendet jetzt `get_data_grid_property()`
+- Neue Helper-Methode `get_data_grid_property()` im Renderer (gleiche Logik wie Scanner)
+- Konsistenz zwischen Scanner und Renderer hergestellt ✅
+
 ## [1.5.1] - 2026-02-14
 
 ### Changed
