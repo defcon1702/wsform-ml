@@ -5,6 +5,29 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.4] - 2026-02-14
+
+### Fixed
+- **CRITICAL: E-Commerce Optionen werden jetzt im Frontend ausgespielt**
+  - Problem: Renderer verwendete falsches Key-Format für Options Lookup
+  - Renderer suchte: `"53.meta.data_grid_checkbox_price.groups.0.rows.2.data.0::option"` ❌
+  - DB hat aber: `"groups.0.sections.0.fields.1.meta.data_grid_checkbox_price.groups.0.rows.2.data.0::option"` ✅
+  - Resultat: Options Übersetzungen wurden nicht gefunden
+  - Lösung: Renderer verwendet jetzt field_path statt field_id für Options
+
+### Technical Details
+- Renderer: `translate_options()` verwendet jetzt `field_path` Parameter
+- Renderer: `translate_field()` erhält jetzt `field_path` Parameter
+- Key-Format jetzt konsistent mit Admin.js und DB
+- Admin.js speichert: `field_path + ".meta.data_grid_TYPE..."`
+- Renderer sucht jetzt: `field_path + ".meta.data_grid_TYPE..."` ✅
+
+### Migration Required
+- **Group Labels müssen neu eingegeben werden**
+  - Alte field_ids: 0, 4, 6 (aus v1.5.0-v1.5.2)
+  - Neue field_ids: -4, -6 (aus v1.5.3)
+  - Aktion: Formular neu scannen und Tab-Übersetzungen neu eingeben
+
 ## [1.5.3] - 2026-02-14
 
 ### Fixed

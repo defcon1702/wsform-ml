@@ -104,16 +104,17 @@ class WSForm_ML_Renderer {
 				}
 
 				foreach ($section->fields as $field_index => $field) {
-					// Verwende field->id statt field_path für Translation Lookup
-					$this->translate_field($field, $translation_map);
-				}
+			// Baue field_path für Options Lookup
+			$field_path = "groups.{$group_index}.sections.{$section_index}.fields.{$field_index}";
+			$this->translate_field($field, $translation_map, $field_path);
+		}
 			}
 		}
 
 		return $form_object;
 	}
 
-	private function translate_field(&$field, $translation_map) {
+	private function translate_field(&$field, $translation_map, $field_path) {
 		// Verwende field->id als Key (stabil!)
 		$field_id = $field->id ?? null;
 		if (!$field_id) {
@@ -160,7 +161,7 @@ class WSForm_ML_Renderer {
 			// price_checkbox → data_grid_checkbox_price (NICHT data_grid_price_checkbox!)
 			$data_grid_property = $this->get_data_grid_property($field->type ?? '');
 			if (isset($field->meta->{$data_grid_property}->groups)) {
-				$this->translate_options($field, $field_id, $translation_map, $data_grid_property);
+				$this->translate_options($field, $field_id, $translation_map, $data_grid_property, $field_path);
 			}
 		}
 
@@ -169,7 +170,7 @@ class WSForm_ML_Renderer {
 		}
 	}
 
-	private function translate_options(&$field, $field_id, $translation_map, $data_grid_property) {
+	private function translate_options(&$field, $field_id, $translation_map, $data_grid_property, $field_path) {
 		$data_grid = $field->meta->{$data_grid_property};
 		
 		foreach ($data_grid->groups as $group_index => $group) {
@@ -180,9 +181,10 @@ class WSForm_ML_Renderer {
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
 					foreach ($row->data as $col_index => $value) {
-						// Verwende field_id für Options
-						// Format: field_id.meta.data_grid_TYPE.groups.X.rows.Y.data.Z::option
-						$key = "{$field_id}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
+						// WICHTIG: Verwende field_path (nicht field_id!) für Options
+						// Admin.js speichert: field_path + ".meta.data_grid_TYPE.groups.X.rows.Y.data.Z"
+						// Format: "groups.0.sections.0.fields.1.meta.data_grid_checkbox_price.groups.0.rows.2.data.0::option"
+						$key = "{$field_path}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
 						
 						if (isset($translation_map[$key])) {
 							$row->data[$col_index] = $translation_map[$key];
