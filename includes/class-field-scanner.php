@@ -232,7 +232,22 @@ class WSForm_ML_Field_Scanner {
 
 	private function has_options($field) {
 		$option_field_types = ['select', 'radio', 'checkbox', 'price_select', 'price_radio', 'price_checkbox'];
-		return in_array($field->type ?? '', $option_field_types) && isset($field->meta->data_grid);
+		$is_option_type = in_array($field->type ?? '', $option_field_types);
+		
+		if ($is_option_type) {
+			error_log("WSForm ML Scanner: Field {$field->id} is option type ({$field->type})");
+			error_log("WSForm ML Scanner: has meta? " . (isset($field->meta) ? 'YES' : 'NO'));
+			if (isset($field->meta)) {
+				error_log("WSForm ML Scanner: has data_grid? " . (isset($field->meta->data_grid) ? 'YES' : 'NO'));
+				if (isset($field->meta->data_grid)) {
+					error_log("WSForm ML Scanner: data_grid structure: " . json_encode($field->meta->data_grid));
+				} else {
+					error_log("WSForm ML Scanner: meta keys: " . implode(', ', array_keys((array)$field->meta)));
+				}
+			}
+		}
+		
+		return $is_option_type && isset($field->meta->data_grid);
 	}
 
 	private function extract_options($field) {
