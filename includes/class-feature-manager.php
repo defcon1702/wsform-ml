@@ -65,7 +65,6 @@ class WSForm_ML_Feature_Manager {
 		// Trigger Feature-spezifische Aktionen
 		$this->on_feature_change($feature, true);
 
-		error_log("WSForm ML: Feature '{$feature}' enabled");
 		return true;
 	}
 
@@ -83,7 +82,6 @@ class WSForm_ML_Feature_Manager {
 		// Trigger Feature-spezifische Aktionen
 		$this->on_feature_change($feature, false);
 
-		error_log("WSForm ML: Feature '{$feature}' disabled");
 		return true;
 	}
 

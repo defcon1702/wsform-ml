@@ -14,7 +14,6 @@ class WSForm_ML_Field_Scanner {
 	}
 
 	public function scan_form($form_id) {
-		error_log("WSForm ML Scanner: ===== SCAN START for Form {$form_id} =====");
 		
 		$start_time = microtime(true);
 		$stats = [
@@ -25,16 +24,13 @@ class WSForm_ML_Field_Scanner {
 		];
 
 		try {
-			error_log("WSForm ML Scanner: Getting form object...");
 			$form_object = $this->get_form_object($form_id);
 			if (!$form_object) {
 				throw new Exception(__('Formular nicht gefunden', 'wsform-ml'));
 			}
 
-			error_log("WSForm ML Scanner: Form object loaded, discovering fields...");
 			$discovered_fields = $this->discover_fields($form_object);
 			$stats['fields_found'] = count($discovered_fields);
-			error_log("WSForm ML Scanner: Discovered {$stats['fields_found']} fields");
 
 			$this->sync_fields_to_cache($form_id, $discovered_fields, $stats);
 			
@@ -96,7 +92,6 @@ class WSForm_ML_Field_Scanner {
 			return $form_object;
 		} catch (Exception $e) {
 			ob_end_clean();
-			error_log('WSForm ML: get_form_object error - ' . $e->getMessage());
 			throw $e;
 		}
 	}
@@ -105,11 +100,9 @@ class WSForm_ML_Field_Scanner {
 		$fields = [];
 
 		if (empty($form_object->groups)) {
-			error_log("WSForm ML Scanner: No groups in form object");
 			return $fields;
 		}
 
-		error_log("WSForm ML Scanner: Form has " . count($form_object->groups) . " groups");
 
 		foreach ($form_object->groups as $group_index => $group) {
 			// Scanne Group Label (Tab-Name)
@@ -136,31 +129,26 @@ class WSForm_ML_Field_Scanner {
 					'parent_field_id' => null,
 					'field_structure' => null
 				];
-				error_log("WSForm ML Scanner: Found group label: {$group->label} (field_id: {$group_field_id})");
 			}
 			
 			if (empty($group->sections)) {
 				continue;
 			}
 
-			error_log("WSForm ML Scanner: Group {$group_index} has " . count($group->sections) . " sections");
 
 			foreach ($group->sections as $section_index => $section) {
 				if (empty($section->fields)) {
 					continue;
 				}
 
-				error_log("WSForm ML Scanner: Section {$section_index} has " . count($section->fields) . " fields");
 
 				foreach ($section->fields as $field_index => $field) {
 					$field_path = $parent_path ? "{$parent_path}.fields.{$field_index}" : "groups.{$group_index}.sections.{$section_index}.fields.{$field_index}";
 					
-					error_log("WSForm ML Scanner: Processing field {$field->id} at {$field_path}");
 					
 					$field_data = $this->extract_field_data($field, $field_path, $parent_id);
 					if ($field_data) {
 						$fields[] = $field_data;
-						error_log("WSForm ML Scanner: Field {$field->id} extracted with " . count($field_data['translatable_properties']) . " properties");
 
 						if ($this->is_repeater_field($field)) {
 							$repeater_fields = $this->scan_repeater_fields($field, $field_path, $field->id);
@@ -198,12 +186,9 @@ class WSForm_ML_Field_Scanner {
 	private function get_translatable_properties($field) {
 		$properties = [];
 
-		error_log("WSForm ML Scanner: get_translatable_properties for field {$field->id} ({$field->type})");
 		
 		// Dumpe komplette Struktur für Options-Felder
 		if (in_array($field->type, ['checkbox', 'radio', 'select'])) {
-			error_log("WSForm ML Scanner: FULL FIELD DUMP for {$field->type} field {$field->id}:");
-			error_log(json_encode($field, JSON_PRETTY_PRINT));
 		}
 
 		if (isset($field->label) && !empty($field->label)) {
@@ -245,11 +230,9 @@ class WSForm_ML_Field_Scanner {
 		}
 
 		$has_opts = $this->has_options($field);
-		error_log("WSForm ML Scanner: Field {$field->id} has_options = " . ($has_opts ? 'YES' : 'NO'));
 
 		if ($has_opts) {
 			$options = $this->extract_options($field);
-			error_log("WSForm ML Scanner: Extracted " . count($options) . " options for field {$field->id}");
 			foreach ($options as $option_data) {
 				$properties[] = $option_data;
 			}
@@ -288,19 +271,16 @@ class WSForm_ML_Field_Scanner {
 		$data_grid_property = 'data_grid_' . $field->type;
 		
 		if (!isset($field->meta->{$data_grid_property}->groups)) {
-			error_log("WSForm ML Scanner: Field {$field->id} has no {$data_grid_property}.groups");
 			return $options;
 		}
 
 		$data_grid = $field->meta->{$data_grid_property};
-		error_log("WSForm ML Scanner: Extracting options for field {$field->id} ({$field->type}) from {$data_grid_property}");
 
 		foreach ($data_grid->groups as $group_index => $group) {
 			if (!isset($group->rows)) {
 				continue;
 			}
 
-			error_log("WSForm ML Scanner: Group {$group_index} has " . count($group->rows) . " rows");
 
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
@@ -312,7 +292,6 @@ class WSForm_ML_Field_Scanner {
 								'value' => $value,
 								'context' => "option_{$row_index}_{$col_index}"
 							];
-							error_log("WSForm ML Scanner: Found option - Row {$row_index}, Col {$col_index}: {$value}");
 						}
 					}
 				}
@@ -378,7 +357,6 @@ class WSForm_ML_Field_Scanner {
 			]
 		);
 		if ($deleted) {
-			error_log("WSForm ML Scanner: Deleted {$deleted} old group labels with field_id=0");
 		}
 
 		// Hole alle existierenden Felder für dieses Form

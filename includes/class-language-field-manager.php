@@ -15,6 +15,7 @@ if (!defined('ABSPATH')) {
 class WSForm_ML_Language_Field_Manager {
 
 	private static $instance = null;
+	private $logger = null;
 	private $option_name = 'wsform_ml_language_fields';
 
 	public static function instance() {
@@ -25,6 +26,7 @@ class WSForm_ML_Language_Field_Manager {
 	}
 
 	private function __construct() {
+		$this->logger = WSForm_ML_Logger::instance();
 		add_filter('wsf_pre_render', [$this, 'set_language_field_value'], 10, 2);
 	}
 
@@ -73,9 +75,9 @@ class WSForm_ML_Language_Field_Manager {
 				$ws_form->id = absint($form_id);
 				$ws_form->db_publish();
 				
-				error_log("WSForm ML: Deleted language field {$field_id} from form {$form_id}");
+				// Deleted language field {$field_id} from form {$form_id}");
 			} catch (Exception $e) {
-				error_log("WSForm ML: Error deleting language field - " . $e->getMessage());
+				// Error deleting language field - " . $e->getMessage());
 			}
 		}
 		
@@ -157,7 +159,7 @@ class WSForm_ML_Language_Field_Manager {
 			];
 
 		} catch (Exception $e) {
-			error_log('WSForm ML: Language Field creation error - ' . $e->getMessage());
+			// Language Field creation error - ' . $e->getMessage());
 			return [
 				'success' => false,
 				'error' => $e->getMessage()
@@ -214,7 +216,7 @@ class WSForm_ML_Language_Field_Manager {
 						}
 						$field->meta->default_value = $current_language;
 						
-						error_log("WSForm ML: Set language field value to '{$current_language}' for form {$form_id}, field {$language_field_id}");
+						// Set language field value to '{$current_language}' for form {$form_id}, field {$language_field_id}");
 						return $form;
 					}
 				}

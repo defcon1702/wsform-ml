@@ -27,27 +27,22 @@ class WSForm_ML_Renderer {
 		
 		// Debug: Bestätige dass Renderer initialisiert wurde
 		add_action('init', function() {
-			error_log('WSForm ML: Renderer initialized - Hook registered on wsf_pre_render');
 		}, 999);
 	}
 
 	public function translate_form($form, $preview = false) {
-		error_log('WSForm ML: translate_form called - Form ID: ' . ($form->id ?? 'unknown') . ' - Preview: ' . ($preview ? 'yes' : 'no'));
 		
 		if ($preview) {
 			return $form;
 		}
 
 		$this->current_language = WSForm_ML_Polylang_Integration::get_current_language();
-		error_log('WSForm ML: Current language: ' . $this->current_language);
 		
 		if (!$this->current_language) {
-			error_log('WSForm ML: No current language');
 			return $form;
 		}
 
 		$form_id = $form->id ?? 0;
-		error_log('WSForm ML: Form ID: ' . $form_id);
 		
 		if (!$form_id) {
 			return $form;
@@ -56,18 +51,14 @@ class WSForm_ML_Renderer {
 		// Lade Übersetzungen für die aktuelle Sprache (inkl. Standard-Sprache!)
 		// So kann der User für JEDE Sprache Übersetzungen eingeben
 		$translations = $this->translation_manager->get_form_translations($form_id, $this->current_language);
-		error_log('WSForm ML: Found ' . count($translations) . ' translations for language: ' . $this->current_language);
 		
 		if (empty($translations)) {
-			error_log('WSForm ML: No translations found - showing original values');
 			return $form;
 		}
 
 		$translation_map = $this->build_translation_map($translations);
-		error_log('WSForm ML: Translation map keys: ' . implode(', ', array_keys($translation_map)));
 		
 		$form = $this->apply_translations($form, $translation_map);
-		error_log('WSForm ML: Translations applied');
 
 		return $form;
 	}
@@ -80,7 +71,6 @@ class WSForm_ML_Renderer {
 			$key = $translation->field_path . '::' . $translation->property_type;
 			$map[$key] = $translation->translated_value;
 			
-			error_log("WSForm ML: Translation Map - Key: {$key}, Type: {$translation->property_type}");
 		}
 
 		return $map;
@@ -97,7 +87,6 @@ class WSForm_ML_Renderer {
 			$group_label_key = "{$group_path}::group_label";
 			if (isset($translation_map[$group_label_key])) {
 				$group->label = $translation_map[$group_label_key];
-				error_log("WSForm ML: Translated group label at {$group_label_key}");
 			}
 			
 			if (empty($group->sections)) {

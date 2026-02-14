@@ -89,7 +89,6 @@ class WSForm_ML_Polylang_Integration {
 				];
 			}
 		} catch (Exception $e) {
-			error_log('WSForm ML: Error getting Polylang languages - ' . $e->getMessage());
 			return [
 				[
 					'code' => 'en',

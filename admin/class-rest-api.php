@@ -175,7 +175,7 @@ class WSForm_ML_REST_API {
 
 					$form->translation_stats = $translation_manager->get_translation_stats($form->id);
 				} catch (Exception $e) {
-					error_log('WSForm ML: Error processing form ' . $form->id . ' - ' . $e->getMessage());
+					// Error processing form ' . $form->id . ' - ' . $e->getMessage());
 					$form->cached_fields_count = 0;
 					$form->last_scanned = null;
 					$form->translation_stats = ['total_fields' => 0, 'languages' => []];
@@ -185,7 +185,6 @@ class WSForm_ML_REST_API {
 			return rest_ensure_response($forms);
 			
 		} catch (Exception $e) {
-			error_log('WSForm ML: Fatal error in get_forms - ' . $e->getMessage());
 			return new WP_Error('internal_error', $e->getMessage(), ['status' => 500]);
 		}
 	}
@@ -214,7 +213,7 @@ class WSForm_ML_REST_API {
 			}
 		} catch (Exception $e) {
 			ob_end_clean();
-			error_log('WSForm ML: Scan error - ' . $e->getMessage());
+			// Scan error - ' . $e->getMessage());
 			return new WP_Error('scan_exception', $e->getMessage(), ['status' => 500]);
 		}
 	}

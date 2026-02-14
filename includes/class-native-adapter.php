@@ -46,7 +46,6 @@ class WSForm_ML_Native_Adapter {
 		update_option('wsform_ml_use_native_api', true);
 		$this->init_hooks();
 		
-		error_log('WSForm ML: Native API adapter enabled');
 	}
 
 	/**
@@ -57,7 +56,6 @@ class WSForm_ML_Native_Adapter {
 		update_option('wsform_ml_use_native_api', false);
 		$this->remove_hooks();
 		
-		error_log('WSForm ML: Native API adapter disabled');
 	}
 
 	/**
@@ -84,7 +82,6 @@ class WSForm_ML_Native_Adapter {
 		// Hook in Form Deletion
 		add_action('wsf_translate_unregister_all', [$this, 'unregister_all'], 10, 1);
 		
-		error_log('WSForm ML: Native API hooks registered');
 	}
 
 	/**
@@ -118,13 +115,11 @@ class WSForm_ML_Native_Adapter {
 			return $string_value;
 		}
 
-		error_log("WSForm ML Native: Translating string_id={$string_id}, lang={$current_lang}");
 
 		// Konvertiere WSForm String-ID zu unserem field_path Format
 		$field_data = $this->parse_string_id($string_id);
 		
 		if (!$field_data) {
-			error_log("WSForm ML Native: Could not parse string_id={$string_id}");
 			return $string_value;
 		}
 
@@ -138,11 +133,9 @@ class WSForm_ML_Native_Adapter {
 		);
 
 		if ($translation && !empty($translation->translated_value)) {
-			error_log("WSForm ML Native: Found translation for {$string_id}");
 			return $translation->translated_value;
 		}
 
-		error_log("WSForm ML Native: No translation found for {$string_id}");
 		return $string_value;
 	}
 
@@ -161,7 +154,6 @@ class WSForm_ML_Native_Adapter {
 			return;
 		}
 
-		error_log("WSForm ML Native: Registering string_id={$string_id}, type={$type}");
 
 		// Parse String-ID
 		$field_data = $this->parse_string_id($string_id);
@@ -185,7 +177,6 @@ class WSForm_ML_Native_Adapter {
 			return;
 		}
 
-		error_log("WSForm ML Native: Translation start for form {$form_id}");
 		$this->string_id_map = [];
 	}
 
@@ -197,7 +188,6 @@ class WSForm_ML_Native_Adapter {
 			return;
 		}
 
-		error_log("WSForm ML Native: Translation finish for form {$form_id}, registered " . count($this->string_id_map) . " strings");
 	}
 
 	/**
@@ -208,7 +198,6 @@ class WSForm_ML_Native_Adapter {
 			return;
 		}
 
-		error_log("WSForm ML Native: Unregistering all strings for form {$form_id}");
 		
 		// Lösche aus unserem Cache
 		global $wpdb;
