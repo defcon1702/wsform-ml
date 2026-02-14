@@ -322,8 +322,12 @@
 			// Globaler Speicher-Button
 			const globalSaveBtn = `
 				<div class="wsform-ml-global-actions">
+					<button class="button button-large wsform-ml-toggle-all" id="wsform-ml-toggle-all-btn">
+						<span class="dashicons dashicons-editor-expand"></span>
+						Alle ausklappen
+					</button>
 					<button class="button button-primary button-large wsform-ml-save-all" id="wsform-ml-save-all-btn">
-						<span class="dashicons dashicons-download"></span>
+						<span class="dashicons dashicons-database-export"></span>
 						Alle Änderungen speichern
 					</button>
 				</div>
@@ -333,25 +337,33 @@
 				const field = group.field;
 				const fieldBadge = field.is_repeater ? 'repeater' : (field.has_options ? 'option' : '');
 
+				// Prüfe ob alle Properties übersetzt sind
+				const hasUntranslated = group.properties.some(prop => {
+					const key = `${prop.field_path}::${prop.type}`;
+					const translation = this.translations[this.currentLanguage]?.[key];
+					return !translation?.translated_value;
+				});
+				const untranslatedClass = hasUntranslated ? ' wsform-ml-field-untranslated' : '';
+
 				return `
-					<div class="wsform-ml-field-group">
-						<div class="wsform-ml-field-header" data-field-id="${field.field_id}">
-							<div>
-								<div class="wsform-ml-field-title">
-									${this.escapeHtml(field.field_label || `Field ${field.field_id}`)}
-									${fieldBadge ? `<span class="wsform-ml-field-badge ${fieldBadge}">${fieldBadge}</span>` : ''}
+						<div class="wsform-ml-field-group">
+							<div class="wsform-ml-field${untranslatedClass}" data-field-id="${field.field_id}">
+								<div>
+									<div class="wsform-ml-field-title">
+										${this.escapeHtml(field.field_label || `Field ${field.field_id}`)}
+										${fieldBadge ? `<span class="wsform-ml-field-badge ${fieldBadge}">${fieldBadge}</span>` : ''}
+									</div>
+									<div class="wsform-ml-field-meta">
+										${field.field_type} • ID: ${field.field_id}
+									</div>
 								</div>
-								<div class="wsform-ml-field-meta">
-									${field.field_type} • ID: ${field.field_id}
-								</div>
+								<span class="dashicons dashicons-arrow-down-alt2"></span>
 							</div>
-							<span class="dashicons dashicons-arrow-down-alt2"></span>
+							<div class="wsform-ml-field-body">
+								${group.properties.map(prop => this.renderProperty(field, prop)).join('')}
+							</div>
 						</div>
-						<div class="wsform-ml-field-body">
-							${group.properties.map(prop => this.renderProperty(field, prop)).join('')}
-						</div>
-					</div>
-				`;
+					`;
 			}).join('');
 
 			container.querySelectorAll('.wsform-ml-field-header').forEach(header => {
@@ -373,7 +385,7 @@
 					<div class="wsform-ml-property-original">${this.escapeHtml(prop.value)}</div>
 					<div class="wsform-ml-property-input">
 						<textarea 
-							class="wsform-ml-translation-input${!translatedValue ? ' untranslated' : ''}"
+							class="wsform-ml-translation-input"
 							data-form-id="${this.currentFormId}"
 							data-field-id="${field.field_id}"
 							data-field-path="${prop.field_path}"
@@ -462,7 +474,32 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		WSFormML.init();
 
-		document.addEventListener('click', async (e) => {
+		const container = document.getElementById('wsform-ml-fields-container');
+
+		// Event Delegation für alle Buttons
+		container.addEventListener('click', async (e) => {
+			// Toggle All Button
+			if (e.target.closest('.wsform-ml-toggle-all')) {
+				const btn = e.target.closest('.wsform-ml-toggle-all');
+				const allBodies = container.querySelectorAll('.wsform-ml-field-body');
+				const isExpanding = btn.textContent.includes('ausklappen');
+
+				allBodies.forEach(body => {
+					if (isExpanding) {
+						body.classList.add('open');
+					} else {
+						body.classList.remove('open');
+					}
+				});
+
+				if (isExpanding) {
+					btn.innerHTML = '<span class="dashicons dashicons-editor-contract"></span> Alle einklappen';
+				} else {
+					btn.innerHTML = '<span class="dashicons dashicons-editor-expand"></span> Alle ausklappen';
+				}
+				return;
+			}
+
 			// Globaler Speicher-Button
 			if (e.target.closest('.wsform-ml-save-all')) {
 				const btn = e.target.closest('.wsform-ml-save-all');
@@ -505,9 +542,9 @@
 					}
 				}
 
-				btn.innerHTML = `<span class="dashicons dashicons-download"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
+				btn.innerHTML = `<span class="dashicons dashicons-database-export"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
 				setTimeout(() => {
-					btn.innerHTML = '<span class="dashicons dashicons-download"></span> Alle Änderungen speichern';
+					btn.innerHTML = '<span class="dashicons dashicons-database-export"></span> Alle Änderungen speichern';
 				}, 3000);
 
 				btn.classList.remove('is-loading');

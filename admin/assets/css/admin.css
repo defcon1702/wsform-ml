@@ -53,17 +53,31 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #ddd;
   z-index: 10;
+  display: flex;
+  gap: 10px;
 }
 
-/* Farbliche Kennzeichnung unübersetzter Felder */
-.wsform-ml-translation-input.untranslated {
+.wsform-ml-toggle-all {
+  flex: 0 0 auto;
+}
+
+/* Farbliche Kennzeichnung unübersetzter Felder - Akkordion */
+.wsform-ml-field.wsform-ml-field-untranslated {
   border-left: 4px solid #f0ad4e;
   background-color: #fffbf0;
 }
 
-.wsform-ml-translation-input.untranslated:focus {
-  border-left-color: #ec971f;
-  background-color: #fff;
+.wsform-ml-field.wsform-ml-field-untranslated .wsform-ml-field-title {
+  color: #856404;
+  font-weight: 600;
+}
+
+.wsform-ml-field.wsform-ml-field-untranslated::before {
+  content: '⚠';
+  position: absolute;
+  left: -20px;
+  color: #f0ad4e;
+  font-size: 16px;
 }
 
 .wsform-ml-save-all {
