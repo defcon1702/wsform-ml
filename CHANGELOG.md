@@ -5,6 +5,27 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.9] - 2026-02-14
+
+### Fixed
+- **KRITISCHER BUGFIX**: Scanner vermischte Feld-Labels
+  - Problem: Scanner verwendete `field_id + field_path` als eindeutigen Key
+  - WSForm kann dieselbe `field_id` für verschiedene Felder vergeben
+  - Resultat: Label von "price_select" wurde mit "Vorname" überschrieben
+  - Lösung: Verwende nur `field_path` als eindeutigen Key (ist bereits eindeutig)
+  - UPDATE/DELETE Queries verwenden jetzt nur noch `field_path` in WHERE-Klausel
+  - `field_id` wird jetzt auch beim UPDATE aktualisiert (kann sich ändern)
+
+### Added
+- Debug-Script für Price Checkbox Felder (`debug-price-checkbox.php`)
+  - Zeigt Formular-Struktur und Scanner-Ergebnisse
+  - Hilft bei der Analyse von Feld-Problemen
+  - Verwendung: `?form_id=DEINE_ID`
+
+### Changed
+- Field Scanner: Verbesserte Feld-Identifikation
+- Field Cache: Robustere Synchronisations-Logik
+
 ## [1.2.8] - 2026-02-14
 
 ### Performance

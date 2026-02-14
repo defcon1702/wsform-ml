@@ -361,43 +361,43 @@ class WSForm_ML_Field_Scanner {
 
 		// Hole alle existierenden Felder für dieses Form
 		$existing_fields = $wpdb->get_results($wpdb->prepare(
-			"SELECT field_id, field_path FROM $table WHERE form_id = %d",
+			"SELECT field_path FROM $table WHERE form_id = %d",
 			$form_id
 		), ARRAY_A);
 
-		// Lade existierende Felder mit field_id + field_path als Key
+		// Lade existierende Felder mit field_path als EINZIGEN Key
+		// field_path ist bereits eindeutig (z.B. "groups.0.sections.0.fields.0")
 		$existing_map = [];
 		foreach ($existing_fields as $field) {
-			$key = $field['field_id'] . '::' . $field['field_path'];
-			$existing_map[$key] = true;
+			$existing_map[$field['field_path']] = true;
 		}
 
 		$discovered_keys = [];
 
 		foreach ($discovered_fields as $field_data) {
-			$key = $field_data['field_id'] . '::' . $field_data['field_path'];
+			$key = $field_data['field_path']; // Nur field_path als Key!
 			
-			// Prüfe ob Feld bereits existiert (entweder in existing_map oder in DB)
+			// Prüfe ob Feld bereits existiert
 			$existing = isset($existing_map[$key]);
 			
 			if (!$existing) {
 				// Double-Check in DB (für Race Conditions)
 				$existing = $wpdb->get_row($wpdb->prepare(
-					"SELECT id FROM {$table} WHERE form_id = %d AND field_id = %s AND field_path = %s",
+					"SELECT id FROM {$table} WHERE form_id = %d AND field_path = %s",
 					$form_id,
-					$field_data['field_id'],
 					$field_data['field_path']
 				));
 			}
 
-			// WICHTIG: Immer in discovered_keys eintragen, auch wenn UPDATE/INSERT fehlschlägt
+			// WICHTIG: Immer in discovered_keys eintragen
 			$discovered_keys[$key] = true;
 
 			if ($existing) {
-				// UPDATE existierendes Feld
+				// UPDATE existierendes Feld - NUR nach field_path suchen!
 				$wpdb->update(
 					$table,
 					[
+						'field_id' => $field_data['field_id'], // Update auch field_id (kann sich ändern)
 						'field_type' => $field_data['field_type'],
 						'field_label' => $field_data['field_label'],
 						'parent_field_id' => $field_data['parent_field_id'],
@@ -409,8 +409,7 @@ class WSForm_ML_Field_Scanner {
 					],
 					[
 						'form_id' => $form_id,
-						'field_id' => $field_data['field_id'],
-						'field_path' => $field_data['field_path']
+						'field_path' => $field_data['field_path'] // NUR field_path als WHERE!
 					]
 				);
 				$stats['updated_fields']++;
@@ -445,14 +444,13 @@ class WSForm_ML_Field_Scanner {
 
 		// Lösche Felder die nicht mehr existieren
 		foreach ($existing_fields as $field) {
-			$key = $field['field_id'] . '::' . $field['field_path'];
+			$key = $field['field_path']; // Nur field_path!
 			if (!isset($discovered_keys[$key])) {
 				$wpdb->delete(
 					$table,
 					[
 						'form_id' => $form_id,
-						'field_id' => $field['field_id'],
-						'field_path' => $field['field_path']
+						'field_path' => $field['field_path'] // Nur field_path als WHERE!
 					]
 				);
 				$stats['deleted_fields']++;
