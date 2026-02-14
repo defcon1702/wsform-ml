@@ -21,6 +21,7 @@ class WSForm_ML_Database {
 			form_id bigint(20) UNSIGNED NOT NULL,
 			field_id bigint(20) UNSIGNED NOT NULL,
 			field_path varchar(500) NOT NULL,
+			field_path_hash char(64) NOT NULL,
 			property_type varchar(50) NOT NULL,
 			language_code varchar(10) NOT NULL,
 			original_value longtext,
@@ -31,7 +32,7 @@ class WSForm_ML_Database {
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
-			UNIQUE KEY unique_translation (form_id, field_id, field_path, property_type, language_code),
+			UNIQUE KEY unique_translation (form_id, field_id, field_path_hash, property_type, language_code),
 			KEY idx_form_lang (form_id, language_code),
 			KEY idx_field (field_id),
 			KEY idx_sync (last_synced)

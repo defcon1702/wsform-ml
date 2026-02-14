@@ -44,6 +44,7 @@ class WSForm_ML_Translation_Manager {
 			'form_id' => $data['form_id'],
 			'field_id' => $data['field_id'],
 			'field_path' => $data['field_path'],
+			'field_path_hash' => hash('sha256', $data['field_path']),
 			'property_type' => $data['property_type'],
 			'language_code' => $data['language_code'],
 			'original_value' => $data['original_value'] ?? null,

@@ -5,6 +5,31 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.6.0] - 2026-02-14
+
+### Fixed
+- **CRITICAL: MySQL Unique Index Limit überschritten - Duplicate Entry Fehler**
+  - Problem: Unique Index `(form_id, field_id, field_path, property_type, language_code)` zu lang
+  - MySQL Limit: 3072 bytes für Unique Keys
+  - `field_path` varchar(500) → überschreitet Limit → Index wird abgeschnitten
+  - Resultat: Duplicate Entry Fehler beim Speichern von Options mit langen Paths
+  - Symptom: "Duplicate entry '4-28-groups.0.sections.0.fields.19.meta.data_grid_checkbox.group'"
+  - Lösung: Verwende `field_path_hash` (SHA256) im Unique Index statt `field_path`
+
+### Changed
+- **BREAKING CHANGE: DB Schema geändert**
+  - Neue Spalte: `field_path_hash` char(64) NOT NULL
+  - Unique Index jetzt: `(form_id, field_id, field_path_hash, property_type, language_code)`
+  - `field_path_hash` wird automatisch berechnet: `hash('sha256', $field_path)`
+  - Keine Kollisionen mehr, unabhängig von Path-Länge
+
+### Migration Required
+- **Plugin muss neu installiert werden**
+  - Alte Tabelle löschen: `DROP TABLE wp_wsform_ml_translations;`
+  - Plugin deaktivieren und neu aktivieren → Tabelle wird neu erstellt
+  - Formular neu scannen
+  - Übersetzungen neu eingeben
+
 ## [1.5.5] - 2026-02-14
 
 ### Fixed

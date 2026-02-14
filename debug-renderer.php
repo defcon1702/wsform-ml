@@ -17,9 +17,9 @@ echo "<pre>";
 echo "Debug: Renderer Translation Map für Form #{$form_id} (Sprache: {$lang})\n";
 echo str_repeat("=", 80) . "\n\n";
 
-// Lade Renderer
+// Lade Renderer - verwende getInstance() da Constructor private ist
+require_once(plugin_dir_path(__FILE__) . 'includes/class-translation-manager.php');
 require_once(plugin_dir_path(__FILE__) . 'includes/class-renderer.php');
-$renderer = new WSForm_ML_Renderer();
 
 // Hole Übersetzungen aus DB
 global $wpdb;
