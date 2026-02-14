@@ -326,6 +326,9 @@
 						<span class="dashicons dashicons-yes"></span>
 						Alle Änderungen speichern
 					</button>
+					<p class="description" style="margin-top: 10px; text-align: center;">
+						Änderungen werden automatisch gespeichert. Dieser Button speichert alle Felder auf einmal.
+					</p>
 				</div>
 			`;
 
@@ -381,9 +384,6 @@
 							data-original="${this.escapeHtml(prop.value)}"
 							placeholder="Übersetzung eingeben..."
 						>${this.escapeHtml(translatedValue)}</textarea>
-						<button class="button button-primary wsform-ml-save-translation">
-							${wsformML.i18n.saveTranslation}
-						</button>
 					</div>
 				</div>
 			`;
@@ -514,12 +514,11 @@
 
 				btn.classList.remove('is-loading');
 				btn.disabled = false;
-
-				await WSFormML.loadTranslations(WSFormML.currentFormId, WSFormML.currentLanguage);
 				return;
 			}
 
-			if (e.target.classList.contains('wsform-ml-save-translation')) {
+			// Einzelne Save-Buttons entfernt - nur globaler Button wird verwendet
+			if (false && e.target.classList.contains('wsform-ml-save-translation')) {
 				const btn = e.target;
 				const textarea = btn.previousElementSibling;
 
@@ -553,8 +552,7 @@
 						btn.textContent = wsformML.i18n.saveTranslation;
 					}, 2000);
 
-					// Aktualisiere Übersetzungen ohne Felder neu zu laden (behält Akkordion-Status)
-					await WSFormML.loadTranslations(WSFormML.currentFormId, WSFormML.currentLanguage);
+					// Keine UI-Aktualisierung nötig - Übersetzung ist bereits gespeichert
 
 				} catch (error) {
 					console.error('Save error:', error);

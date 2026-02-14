@@ -174,8 +174,13 @@ class WSForm_ML_Renderer {
 						$key = "{$field_path}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
 						
 						if (isset($translation_map[$key])) {
-							$row->data[$col_index] = $translation_map[$key];
-							error_log("WSForm ML: Translated option at {$key}");
+							$translated_value = $translation_map[$key];
+							error_log("WSForm ML: Translating option at {$key}");
+							error_log("WSForm ML: Original value: " . $value);
+							error_log("WSForm ML: Translated value: " . $translated_value);
+							error_log("WSForm ML: Translated value empty? " . (empty($translated_value) ? 'YES' : 'NO'));
+							
+							$row->data[$col_index] = $translated_value;
 						}
 					}
 				}
