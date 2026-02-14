@@ -156,6 +156,8 @@ class WSForm_ML_Field_Scanner {
 	private function get_translatable_properties($field) {
 		$properties = [];
 
+		error_log("WSForm ML Scanner: get_translatable_properties for field {$field->id} ({$field->type})");
+
 		if (isset($field->label) && !empty($field->label)) {
 			$properties[] = [
 				'type' => 'label',
@@ -194,8 +196,12 @@ class WSForm_ML_Field_Scanner {
 			}
 		}
 
-		if ($this->has_options($field)) {
+		$has_opts = $this->has_options($field);
+		error_log("WSForm ML Scanner: Field {$field->id} has_options = " . ($has_opts ? 'YES' : 'NO'));
+
+		if ($has_opts) {
 			$options = $this->extract_options($field);
+			error_log("WSForm ML Scanner: Extracted " . count($options) . " options for field {$field->id}");
 			foreach ($options as $option_data) {
 				$properties[] = $option_data;
 			}
@@ -218,13 +224,18 @@ class WSForm_ML_Field_Scanner {
 		$options = [];
 		
 		if (!isset($field->meta->data_grid->groups)) {
+			error_log("WSForm ML Scanner: Field {$field->id} has no data_grid.groups");
 			return $options;
 		}
 
-		foreach ($field->meta->data_grid->groups as $group) {
+		error_log("WSForm ML Scanner: Extracting options for field {$field->id} ({$field->type})");
+
+		foreach ($field->meta->data_grid->groups as $group_index => $group) {
 			if (!isset($group->rows)) {
 				continue;
 			}
+
+			error_log("WSForm ML Scanner: Group {$group_index} has " . count($group->rows) . " rows");
 
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
@@ -236,6 +247,7 @@ class WSForm_ML_Field_Scanner {
 								'value' => $value,
 								'context' => "option_{$row_index}_{$col_index}"
 							];
+							error_log("WSForm ML Scanner: Found option - Row {$row_index}, Col {$col_index}: {$value}");
 						}
 					}
 				}
