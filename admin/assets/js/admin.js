@@ -319,7 +319,17 @@
 				});
 			});
 
-			container.innerHTML = Array.from(fieldGroups.values()).map(group => {
+			// Globaler Speicher-Button
+			const globalSaveBtn = `
+				<div class="wsform-ml-global-actions">
+					<button class="button button-primary button-large wsform-ml-save-all" id="wsform-ml-save-all-btn">
+						<span class="dashicons dashicons-yes"></span>
+						Alle Änderungen speichern
+					</button>
+				</div>
+			`;
+
+			container.innerHTML = globalSaveBtn + Array.from(fieldGroups.values()).map(group => {
 				const field = group.field;
 				const fieldBadge = field.is_repeater ? 'repeater' : (field.has_options ? 'option' : '');
 
@@ -455,6 +465,60 @@
 		WSFormML.init();
 
 		document.addEventListener('click', async (e) => {
+			// Globaler Speicher-Button
+			if (e.target.closest('.wsform-ml-save-all')) {
+				const btn = e.target.closest('.wsform-ml-save-all');
+				const textareas = document.querySelectorAll('.wsform-ml-translation-input');
+
+				btn.classList.add('is-loading');
+				btn.disabled = true;
+
+				let saved = 0;
+				let errors = 0;
+
+				for (const textarea of textareas) {
+					const data = {
+						form_id: parseInt(textarea.dataset.formId),
+						field_id: parseInt(textarea.dataset.fieldId),
+						field_path: textarea.dataset.fieldPath,
+						property_type: textarea.dataset.propertyType,
+						language_code: WSFormML.currentLanguage,
+						original_value: textarea.dataset.original,
+						translated_value: textarea.value
+					};
+
+					try {
+						const response = await fetch(`${wsformML.restUrl}/translations`, {
+							method: 'POST',
+							headers: {
+								'X-WP-Nonce': wsformML.nonce,
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(data)
+						});
+
+						if (response.ok) {
+							saved++;
+						} else {
+							errors++;
+						}
+					} catch (error) {
+						errors++;
+					}
+				}
+
+				btn.innerHTML = `<span class="dashicons dashicons-yes"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
+				setTimeout(() => {
+					btn.innerHTML = '<span class="dashicons dashicons-yes"></span> Alle Änderungen speichern';
+				}, 3000);
+
+				btn.classList.remove('is-loading');
+				btn.disabled = false;
+
+				await WSFormML.loadTranslations(WSFormML.currentFormId, WSFormML.currentLanguage);
+				return;
+			}
+
 			if (e.target.classList.contains('wsform-ml-save-translation')) {
 				const btn = e.target;
 				const textarea = btn.previousElementSibling;
@@ -489,7 +553,8 @@
 						btn.textContent = wsformML.i18n.saveTranslation;
 					}, 2000);
 
-					await WSFormML.loadFormData(WSFormML.currentFormId);
+					// Aktualisiere Übersetzungen ohne Felder neu zu laden (behält Akkordion-Status)
+					await WSFormML.loadTranslations(WSFormML.currentFormId, WSFormML.currentLanguage);
 
 				} catch (error) {
 					console.error('Save error:', error);

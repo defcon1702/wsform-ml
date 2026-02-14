@@ -1,503 +1,533 @@
 .wsform-ml-admin {
-	max-width: 100%;
-	margin: 20px 0;
+  max-width: 100%;
+  margin: 20px 0;
 }
 
 .wsform-ml-header {
-	background: #fff;
-	padding: 20px;
-	margin-bottom: 20px;
-	border: 1px solid #ccd0d4;
-	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ccd0d4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .wsform-ml-languages {
-	display: flex;
-	align-items: center;
-	gap: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 #wsform-ml-language-list {
-	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .wsform-ml-language-badge {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	padding: 5px 12px;
-	background: #f0f0f1;
-	border-radius: 3px;
-	font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: #f0f0f1;
+  border-radius: 3px;
+  font-size: 13px;
 }
 
 .wsform-ml-language-badge.is-default {
-	background: #2271b1;
-	color: #fff;
+  background: #2271b1;
+  color: #fff;
 }
 
 .wsform-ml-content {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	gap: 20px;
-	align-items: start;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.wsform-ml-global-actions {
+  position: sticky;
+  top: 32px;
+  z-index: 10;
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccd0d4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.wsform-ml-save-all {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.wsform-ml-save-all .dashicons {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .wsform-ml-sidebar {
-	background: #fff;
-	border: 1px solid #ccd0d4;
-	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .wsform-ml-forms-list h2 {
-	margin: 0;
-	padding: 15px 20px;
-	border-bottom: 1px solid #ccd0d4;
-	font-size: 14px;
-	font-weight: 600;
+  margin: 0;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ccd0d4;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 #wsform-ml-forms-container {
-	max-height: calc(100vh - 300px);
-	overflow-y: auto;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
 }
 
 .wsform-ml-form-item {
-	padding: 15px 20px;
-	border-bottom: 1px solid #f0f0f1;
-	cursor: pointer;
-	transition: background 0.2s;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f1;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .wsform-ml-form-item:hover {
-	background: #f6f7f7;
+  background: #f6f7f7;
 }
 
 .wsform-ml-form-item.active {
-	background: #f0f6fc;
-	border-left: 3px solid #2271b1;
+  background: #f0f6fc;
+  border-left: 3px solid #2271b1;
 }
 
 .wsform-ml-form-item-title {
-	font-weight: 600;
-	margin-bottom: 5px;
-	font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 .wsform-ml-form-item-meta {
-	font-size: 12px;
-	color: #646970;
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
+  font-size: 12px;
+  color: #646970;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .wsform-ml-form-item-badge {
-	display: inline-block;
-	padding: 2px 6px;
-	background: #f0f0f1;
-	border-radius: 2px;
-	font-size: 11px;
-	margin-top: 5px;
+  display: inline-block;
+  padding: 2px 6px;
+  background: #f0f0f1;
+  border-radius: 2px;
+  font-size: 11px;
+  margin-top: 5px;
 }
 
 .wsform-ml-form-item-badge.scanned {
-	background: #d5e8d4;
-	color: #1d4620;
+  background: #d5e8d4;
+  color: #1d4620;
 }
 
 .wsform-ml-form-item-badge.not-scanned {
-	background: #fff3cd;
-	color: #856404;
+  background: #fff3cd;
+  color: #856404;
 }
 
 .wsform-ml-main {
-	background: #fff;
-	border: 1px solid #ccd0d4;
-	box-shadow: 0 1px 1px rgba(0,0,0,.04);
-	min-height: 500px;
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  min-height: 500px;
 }
 
 .wsform-ml-welcome {
-	padding: 60px 40px;
-	text-align: center;
+  padding: 60px 40px;
+  text-align: center;
 }
 
 .wsform-ml-welcome-icon {
-	font-size: 64px;
-	color: #2271b1;
-	margin-bottom: 20px;
+  font-size: 64px;
+  color: #2271b1;
+  margin-bottom: 20px;
 }
 
 .wsform-ml-welcome-icon .dashicons {
-	width: 64px;
-	height: 64px;
-	font-size: 64px;
+  width: 64px;
+  height: 64px;
+  font-size: 64px;
 }
 
 .wsform-ml-welcome h2 {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .wsform-ml-features {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 30px;
-	margin-top: 40px;
-	text-align: left;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+  text-align: left;
 }
 
 .wsform-ml-feature {
-	padding: 20px;
-	background: #f6f7f7;
-	border-radius: 4px;
+  padding: 20px;
+  background: #f6f7f7;
+  border-radius: 4px;
 }
 
 .wsform-ml-feature .dashicons {
-	font-size: 32px;
-	width: 32px;
-	height: 32px;
-	color: #2271b1;
-	margin-bottom: 10px;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #2271b1;
+  margin-bottom: 10px;
 }
 
 .wsform-ml-feature h3 {
-	margin: 10px 0;
-	font-size: 16px;
+  margin: 10px 0;
+  font-size: 16px;
 }
 
 .wsform-ml-feature p {
-	margin: 0;
-	color: #646970;
-	font-size: 13px;
+  margin: 0;
+  color: #646970;
+  font-size: 13px;
 }
 
 .wsform-ml-form-detail {
-	padding: 20px;
+  padding: 20px;
 }
 
 .wsform-ml-form-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding-bottom: 20px;
-	border-bottom: 1px solid #ccd0d4;
-	margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccd0d4;
+  margin-bottom: 20px;
 }
 
 .wsform-ml-form-header h2 {
-	margin: 0;
+  margin: 0;
 }
 
 .wsform-ml-form-actions {
-	display: flex;
-	gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 #wsform-ml-scan-btn .dashicons {
-	margin-top: 3px;
+  margin-top: 3px;
 }
 
 .wsform-ml-notice {
-	padding: 12px 15px;
-	margin-bottom: 20px;
-	border-left: 4px solid #72aee6;
-	background: #f0f6fc;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #72aee6;
+  background: #f0f6fc;
 }
 
 .wsform-ml-notice.success {
-	border-left-color: #00a32a;
-	background: #dff0d8;
+  border-left-color: #00a32a;
+  background: #dff0d8;
 }
 
 .wsform-ml-notice.error {
-	border-left-color: #d63638;
-	background: #f8d7da;
+  border-left-color: #d63638;
+  background: #f8d7da;
 }
 
 .wsform-ml-stats {
-	margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .wsform-ml-stats h3 {
-	margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 #wsform-ml-stats-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
 }
 
 .wsform-ml-stat-card {
-	padding: 15px;
-	background: #f6f7f7;
-	border-radius: 4px;
-	border-left: 3px solid #2271b1;
+  padding: 15px;
+  background: #f6f7f7;
+  border-radius: 4px;
+  border-left: 3px solid #2271b1;
 }
 
 .wsform-ml-stat-label {
-	font-size: 12px;
-	color: #646970;
-	margin-bottom: 5px;
+  font-size: 12px;
+  color: #646970;
+  margin-bottom: 5px;
 }
 
 .wsform-ml-stat-value {
-	font-size: 24px;
-	font-weight: 600;
-	color: #1d2327;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1d2327;
 }
 
 .wsform-ml-stat-progress {
-	margin-top: 8px;
-	height: 6px;
-	background: #dcdcde;
-	border-radius: 3px;
-	overflow: hidden;
+  margin-top: 8px;
+  height: 6px;
+  background: #dcdcde;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .wsform-ml-stat-progress-bar {
-	height: 100%;
-	background: #2271b1;
-	transition: width 0.3s;
+  height: 100%;
+  background: #2271b1;
+  transition: width 0.3s;
 }
 
 .wsform-ml-translation-section {
-	margin-top: 30px;
+  margin-top: 30px;
 }
 
 .wsform-ml-language-tabs {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .wsform-ml-language-tabs h3 {
-	margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 #wsform-ml-language-tabs {
-	display: flex;
-	gap: 5px;
-	border-bottom: 1px solid #ccd0d4;
-	margin-bottom: 20px;
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #ccd0d4;
+  margin-bottom: 20px;
 }
 
 .wsform-ml-language-tab {
-	padding: 10px 20px;
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid transparent;
-	cursor: pointer;
-	font-size: 14px;
-	transition: all 0.2s;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
 }
 
 .wsform-ml-language-tab:hover {
-	background: #f6f7f7;
+  background: #f6f7f7;
 }
 
 .wsform-ml-language-tab.active {
-	border-bottom-color: #2271b1;
-	color: #2271b1;
-	font-weight: 600;
+  border-bottom-color: #2271b1;
+  color: #2271b1;
+  font-weight: 600;
 }
 
 .wsform-ml-warning {
-	padding: 12px 15px;
-	margin-bottom: 20px;
-	background: #fff3cd;
-	border-left: 4px solid #ffc107;
-	display: flex;
-	align-items: center;
-	gap: 10px;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .wsform-ml-warning .dashicons {
-	color: #856404;
+  color: #856404;
 }
 
 #wsform-ml-fields-container {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .wsform-ml-field-group {
-	border: 1px solid #ccd0d4;
-	border-radius: 4px;
-	overflow: hidden;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .wsform-ml-field-header {
-	padding: 12px 15px;
-	background: #f6f7f7;
-	border-bottom: 1px solid #ccd0d4;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	cursor: pointer;
+  padding: 12px 15px;
+  background: #f6f7f7;
+  border-bottom: 1px solid #ccd0d4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .wsform-ml-field-header:hover {
-	background: #f0f0f1;
+  background: #f0f0f1;
 }
 
 .wsform-ml-field-title {
-	font-weight: 600;
-	font-size: 14px;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .wsform-ml-field-meta {
-	font-size: 12px;
-	color: #646970;
-	margin-top: 3px;
+  font-size: 12px;
+  color: #646970;
+  margin-top: 3px;
 }
 
 .wsform-ml-field-badge {
-	padding: 3px 8px;
-	background: #f0f0f1;
-	border-radius: 2px;
-	font-size: 11px;
-	font-weight: 600;
+  padding: 3px 8px;
+  background: #f0f0f1;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .wsform-ml-field-badge.repeater {
-	background: #e7f3ff;
-	color: #0073aa;
+  background: #e7f3ff;
+  color: #0073aa;
 }
 
 .wsform-ml-field-badge.option {
-	background: #fff3cd;
-	color: #856404;
+  background: #fff3cd;
+  color: #856404;
 }
 
 .wsform-ml-field-body {
-	padding: 15px;
-	display: none;
+  padding: 15px;
+  display: none;
 }
 
 .wsform-ml-field-body.open {
-	display: block;
+  display: block;
 }
 
 .wsform-ml-property {
-	margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .wsform-ml-property:last-child {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .wsform-ml-property-label {
-	display: block;
-	font-weight: 600;
-	margin-bottom: 5px;
-	font-size: 13px;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 13px;
 }
 
 .wsform-ml-property-original {
-	padding: 8px 12px;
-	background: #f6f7f7;
-	border-left: 3px solid #646970;
-	margin-bottom: 8px;
-	font-size: 13px;
-	color: #646970;
+  padding: 8px 12px;
+  background: #f6f7f7;
+  border-left: 3px solid #646970;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #646970;
 }
 
 .wsform-ml-property-input {
-	display: flex;
-	gap: 10px;
-	align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .wsform-ml-property-input textarea {
-	flex: 1;
-	min-height: 60px;
-	padding: 8px 12px;
-	border: 1px solid #8c8f94;
-	border-radius: 4px;
-	font-size: 13px;
-	resize: vertical;
+  flex: 1;
+  min-height: 60px;
+  padding: 8px 12px;
+  border: 1px solid #8c8f94;
+  border-radius: 4px;
+  font-size: 13px;
+  resize: vertical;
 }
 
 .wsform-ml-property-input textarea:focus {
-	border-color: #2271b1;
-	outline: none;
-	box-shadow: 0 0 0 1px #2271b1;
+  border-color: #2271b1;
+  outline: none;
+  box-shadow: 0 0 0 1px #2271b1;
 }
 
 .wsform-ml-property-input button {
-	flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .wsform-ml-loading {
-	padding: 40px;
-	text-align: center;
-	color: #646970;
+  padding: 40px;
+  text-align: center;
+  color: #646970;
 }
 
 .wsform-ml-loading::before {
-	content: "";
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	border: 3px solid #f0f0f1;
-	border-top-color: #2271b1;
-	border-radius: 50%;
-	animation: wsform-ml-spin 0.8s linear infinite;
-	margin-right: 10px;
-	vertical-align: middle;
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f0f0f1;
+  border-top-color: #2271b1;
+  border-radius: 50%;
+  animation: wsform-ml-spin 0.8s linear infinite;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
 @keyframes wsform-ml-spin {
-	to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .button.is-loading {
-	position: relative;
-	color: transparent !important;
+  position: relative;
+  color: transparent !important;
 }
 
 .button.is-loading::after {
-	content: "";
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 16px;
-	height: 16px;
-	margin: -8px 0 0 -8px;
-	border: 2px solid #fff;
-	border-top-color: transparent;
-	border-radius: 50%;
-	animation: wsform-ml-spin 0.6s linear infinite;
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: wsform-ml-spin 0.6s linear infinite;
 }
 
 .button-secondary.is-loading::after {
-	border-color: #2271b1;
-	border-top-color: transparent;
+  border-color: #2271b1;
+  border-top-color: transparent;
 }
 
 @media (max-width: 1200px) {
-	.wsform-ml-content {
-		grid-template-columns: 250px 1fr;
-	}
-	
-	.wsform-ml-features {
-		grid-template-columns: 1fr;
-	}
+  .wsform-ml-content {
+    grid-template-columns: 250px 1fr;
+  }
+
+  .wsform-ml-features {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 782px) {
-	.wsform-ml-content {
-		grid-template-columns: 1fr;
-	}
-	
-	.wsform-ml-sidebar {
-		order: 2;
-	}
-	
-	.wsform-ml-main {
-		order: 1;
-	}
+  .wsform-ml-content {
+    grid-template-columns: 1fr;
+  }
+
+  .wsform-ml-sidebar {
+    order: 2;
+  }
+
+  .wsform-ml-main {
+    order: 1;
+  }
 }
