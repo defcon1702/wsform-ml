@@ -36,3 +36,6 @@ package-lock.json
 # Composer
 vendor/
 composer.lock
+
+# Debug Tools (Development only)
+debug-tools/
