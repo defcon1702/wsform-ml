@@ -106,7 +106,7 @@ class WSForm_ML_Translation_Manager {
 
 		// 2. Lade alle existierenden Übersetzungen für Form + Sprache auf einmal (N+1 Fix!)
 		$existing_translations = $wpdb->get_results($wpdb->prepare(
-			"SELECT field_id, field_path, property_type 
+			"SELECT field_id, property_type 
 			 FROM $trans_table 
 			 WHERE form_id = %d AND language_code = %s",
 			$form_id,
@@ -114,9 +114,10 @@ class WSForm_ML_Translation_Manager {
 		));
 
 		// 3. Erstelle Lookup-Map für O(1) Zugriff
+		// WICHTIG: Verwende nur field_id als Key (stabil!), nicht field_path (instabil!)
 		$translation_map = [];
 		foreach ($existing_translations as $trans) {
-			$key = "{$trans->field_id}::{$trans->field_path}::{$trans->property_type}";
+			$key = "{$trans->field_id}::{$trans->property_type}";
 			$translation_map[$key] = true;
 		}
 
@@ -131,7 +132,8 @@ class WSForm_ML_Translation_Manager {
 			}
 
 			foreach ($translatable_props as $prop) {
-				$key = "{$field->field_id}::{$field->field_path}::{$prop['type']}";
+				// Verwende nur field_id als Key (stabil!)
+				$key = "{$field->field_id}::{$prop['type']}";
 				
 				if (!isset($translation_map[$key])) {
 					$missing[] = [
