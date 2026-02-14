@@ -5,6 +5,29 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.0] - 2026-02-14
+
+### BREAKING CHANGE
+- **Group Labels (Tabs) verwenden jetzt WSForm Group ID statt Index**
+  - Problem: Scanner verwendete `group_index` für `field_id`
+  - `group_index` ändert sich bei Tab-Reihenfolge-Änderungen
+  - Resultat: Übersetzungen werden vertauscht wenn User Tabs verschiebt
+  - Lösung: Verwende `group->id` (WSForm's echte Group ID)
+  - `group->id` ist stabil und ändert sich nicht bei Reihenfolge-Änderungen
+  - **WICHTIG:** Bestehende Tab-Übersetzungen müssen neu eingegeben werden!
+
+### Fixed
+- **Tab-Übersetzungen werden jetzt korrekt gespeichert und ausgespielt**
+  - Scanner verwendet jetzt `group->id` statt negative Index-basierte IDs
+  - Beispiel: Group 0 mit ID 4 → `field_id = 4` (statt `-1`)
+  - Übersetzungen bleiben erhalten bei Tab-Reihenfolge-Änderungen ✅
+
+### Migration Required
+- **Alte Tab-Übersetzungen sind ungültig**
+  - Alte `field_id`: `-1`, `-2`, `-3` (Index-basiert)
+  - Neue `field_id`: `4`, `6`, `8` (WSForm Group IDs)
+  - Aktion: Formular neu scannen und Tab-Übersetzungen neu eingeben
+
 ## [1.4.2] - 2026-02-14
 
 ### Fixed

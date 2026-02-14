@@ -100,12 +100,12 @@ class WSForm_ML_Field_Scanner {
 
 		foreach ($form_object->groups as $group_index => $group) {
 			// Scanne Group Label (Tab-Name)
-			// Verwende negative IDs für Group Labels: -(group_index + 1)
-			// Group 0 → -1, Group 1 → -2, usw.
-			// Das vermeidet Konflikte mit echten WSForm Field IDs (immer positiv)
+			// WICHTIG: Verwende group->id (WSForm's echte Group ID) statt group_index!
+			// Grund: group->id ist stabil und ändert sich nicht bei Reihenfolge-Änderungen
+			// group_index würde sich ändern wenn User Tabs verschiebt → Übersetzungen vertauscht!
 			if (!empty($group->label)) {
 				$group_path = "groups.{$group_index}";
-				$group_field_id = -($group_index + 1);
+				$group_field_id = $group->id; // WSForm's echte Group ID (z.B. 4, 6)
 				$fields[] = [
 					'field_id' => $group_field_id,
 					'field_path' => $group_path,

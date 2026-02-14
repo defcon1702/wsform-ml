@@ -35,15 +35,16 @@ echo "Form Label: {$form_object->label}\n\n";
 echo "=== GROUPS (TABS) ===\n";
 foreach ($form_object->groups as $group_index => $group) {
 	echo "Group {$group_index}:\n";
-	echo "  ID: {$group->id}\n";
+	echo "  WSForm Group ID: {$group->id}\n";
 	echo "  Label: {$group->label}\n";
-	echo "  Scanner field_id: " . (-($group_index + 1)) . " (negativ!)\n";
+	echo "  Scanner field_id (ALT): " . (-($group_index + 1)) . " (negativ, Index-basiert)\n";
+	echo "  Scanner field_id (NEU): {$group->id} (WSForm Group ID, stabil!) ✅\n";
 	echo "\n";
 }
 
 echo "\n=== GECACHTE FELDER ===\n";
 global $wpdb;
-$table = $wpdb->prefix . 'wsform_ml_cached_fields';
+$table = $wpdb->prefix . 'wsform_ml_field_cache';
 $cached_fields = $wpdb->get_results($wpdb->prepare(
 	"SELECT * FROM $table WHERE form_id = %d AND field_type = 'group' ORDER BY field_id",
 	$form_id
