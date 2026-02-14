@@ -306,9 +306,15 @@
 			this.fields.forEach(field => {
 				const props = field.translatable_properties || [];
 				props.forEach(prop => {
+					// Für Options: Nutze vollständigen Pfad aus Scanner (prop.path)
+					// Für andere Properties: Nutze field.field_path
+					const fullPath = prop.type === 'option' && prop.path
+						? `${field.field_path}.${prop.path}`
+						: field.field_path;
+
 					fieldGroups.get(field.field_id).properties.push({
 						...prop,
-						field_path: field.field_path
+						field_path: fullPath
 					});
 				});
 			});
