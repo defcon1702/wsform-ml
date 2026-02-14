@@ -382,7 +382,14 @@
 				'option': 'Option',
 				'text_editor': 'Text Editor',
 				'html': 'HTML',
-				'aria_label': 'ARIA Label'
+				'aria_label': 'ARIA Label',
+				'min_label': 'Min Label',
+				'max_label': 'Max Label',
+				'prefix': 'Präfix',
+				'suffix': 'Suffix',
+				'text': 'Button Text',
+				'label_mask_row_prepend': 'Zeilen-Präfix',
+				'label_mask_row_append': 'Zeilen-Suffix'
 			};
 			return labels[type] || type;
 		},

@@ -120,13 +120,27 @@ class WSForm_ML_Renderer {
 				'invalid_feedback',
 				'text_editor',
 				'html',
-				'aria_label'
+				'aria_label',
+				// Range Slider
+				'min_label',
+				'max_label',
+				'prefix',
+				'suffix',
+				// Button/Submit
+				'text',
+				'label_mask_row_prepend',
+				'label_mask_row_append'
 			];
 
 			foreach ($meta_properties as $prop) {
-				$key = "{$field_path}::meta.{$prop}";
-				if (isset($translation_map[$key])) {
-					$field->meta->{$prop} = $translation_map[$key];
+				// Prüfe beide Key-Formate für Kompatibilität
+				$key1 = "{$field_path}::{$prop}";
+				$key2 = "{$field_path}::meta.{$prop}";
+				
+				if (isset($translation_map[$key1])) {
+					$field->meta->{$prop} = $translation_map[$key1];
+				} elseif (isset($translation_map[$key2])) {
+					$field->meta->{$prop} = $translation_map[$key2];
 				}
 			}
 
@@ -141,7 +155,7 @@ class WSForm_ML_Renderer {
 	}
 
 	private function translate_options(&$field, $field_path, $translation_map) {
-		foreach ($field->meta->data_grid->groups as $group) {
+		foreach ($field->meta->data_grid->groups as $group_index => $group) {
 			if (!isset($group->rows)) {
 				continue;
 			}
@@ -149,9 +163,21 @@ class WSForm_ML_Renderer {
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
 					foreach ($row->data as $col_index => $value) {
-						$key = "{$field_path}::meta.data_grid.groups.0.rows.{$row_index}.data.{$col_index}";
-						if (isset($translation_map[$key])) {
-							$row->data[$col_index] = $translation_map[$key];
+						// Prüfe beide Key-Formate
+						$key1 = "{$field_path}::option";
+						$key2 = "{$field_path}::meta.data_grid.groups.{$group_index}.rows.{$row_index}.data.{$col_index}";
+						$key3 = "{$field_path}::meta.data_grid.groups.0.rows.{$row_index}.data.{$col_index}";
+						
+						if (isset($translation_map[$key1])) {
+							// Generischer Option-Key (wenn mehrere Options gleich behandelt werden)
+							$row->data[$col_index] = $translation_map[$key1];
+							error_log("WSForm ML: Translated option (generic) at {$field_path}");
+						} elseif (isset($translation_map[$key2])) {
+							$row->data[$col_index] = $translation_map[$key2];
+							error_log("WSForm ML: Translated option at {$key2}");
+						} elseif (isset($translation_map[$key3])) {
+							$row->data[$col_index] = $translation_map[$key3];
+							error_log("WSForm ML: Translated option at {$key3}");
 						}
 					}
 				}

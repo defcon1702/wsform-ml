@@ -171,7 +171,16 @@ class WSForm_ML_Field_Scanner {
 				'invalid_feedback' => 'invalid_feedback',
 				'text_editor' => 'text_editor',
 				'html' => 'html',
-				'aria_label' => 'aria_label'
+				'aria_label' => 'aria_label',
+				// Range Slider spezifische Properties
+				'min_label' => 'min_label',
+				'max_label' => 'max_label',
+				'prefix' => 'prefix',
+				'suffix' => 'suffix',
+				// Button/Submit Text
+				'text' => 'text',
+				'label_mask_row_prepend' => 'label_mask_row_prepend',
+				'label_mask_row_append' => 'label_mask_row_append'
 			];
 
 			foreach ($meta_properties as $prop => $path) {
