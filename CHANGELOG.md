@@ -5,6 +5,31 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.2] - 2026-02-14
+
+### Fixed
+- **CRITICAL: Preis-Felder Optionen wurden nicht gescannt**
+  - Problem: Scanner suchte nach falschen data_grid Property-Namen
+  - `price_checkbox` → Scanner suchte `data_grid_price_checkbox`
+  - WSForm nutzt aber: `data_grid_checkbox_price` ❌
+  - Resultat: Keine Optionen für Preis-Felder gescannt
+  - Lösung: Neue `get_data_grid_property()` Methode mit korrekter Namenskonvention
+  - Betrifft: `price_select`, `price_radio`, `price_checkbox`
+
+### Technical Details
+- WSForm Namenskonvention für Preis-Felder:
+  - Standard: `data_grid_[type]` (z.B. `data_grid_checkbox`)
+  - Preis: `data_grid_[base]_price` (z.B. `data_grid_checkbox_price`)
+- Neue Helper-Methode `get_data_grid_property($field_type)`:
+  - Erkennt `price_*` Präfix
+  - Entfernt Präfix und hängt `_price` Suffix an
+  - `price_checkbox` → `checkbox` → `data_grid_checkbox_price` ✅
+
+### Known Issues
+- ❌ Tab 1 (Group Label) wird nicht gespeichert
+- ❌ Tab 2 wird gespeichert aber nicht im Frontend ausgespielt
+- Weitere Analyse erforderlich
+
 ## [1.4.1] - 2026-02-14
 
 ### Fixed

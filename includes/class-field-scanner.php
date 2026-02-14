@@ -248,12 +248,7 @@ class WSForm_ML_Field_Scanner {
 			return false;
 		}
 		
-		// WSForm nutzt field-type-spezifische data_grid Properties:
-		// checkbox -> data_grid_checkbox
-		// radio -> data_grid_radio
-		// select -> data_grid_select
-		// price_* -> data_grid_price_*
-		$data_grid_property = 'data_grid_' . $field->type;
+		$data_grid_property = $this->get_data_grid_property($field->type);
 		
 		return isset($field->meta->{$data_grid_property});
 	}
@@ -261,8 +256,7 @@ class WSForm_ML_Field_Scanner {
 	private function extract_options($field) {
 		$options = [];
 		
-		// Bestimme field-type-spezifische data_grid Property
-		$data_grid_property = 'data_grid_' . $field->type;
+		$data_grid_property = $this->get_data_grid_property($field->type);
 		
 		if (!isset($field->meta->{$data_grid_property}->groups)) {
 			return $options;
@@ -315,6 +309,30 @@ class WSForm_ML_Field_Scanner {
 	private function extract_conditional_texts($conditional) {
 		$texts = [];
 		return $texts;
+	}
+
+	/**
+	 * Bestimmt den korrekten data_grid Property-Namen für einen Field-Type
+	 * 
+	 * WSForm nutzt unterschiedliche Namenskonventionen:
+	 * - Standard-Felder: data_grid_[type] (z.B. data_grid_checkbox)
+	 * - Preis-Felder: data_grid_[base]_price (z.B. data_grid_checkbox_price)
+	 * 
+	 * @param string $field_type Der Field-Type (z.B. 'checkbox', 'price_checkbox')
+	 * @return string Der data_grid Property-Name
+	 */
+	private function get_data_grid_property($field_type) {
+		// Preis-Felder haben spezielle Namenskonvention
+		// price_checkbox -> data_grid_checkbox_price (NICHT data_grid_price_checkbox!)
+		// price_radio -> data_grid_radio_price
+		// price_select -> data_grid_select_price
+		if (strpos($field_type, 'price_') === 0) {
+			$base_type = substr($field_type, 6); // Entferne "price_" Präfix
+			return 'data_grid_' . $base_type . '_price';
+		}
+		
+		// Standard-Felder: data_grid_[type]
+		return 'data_grid_' . $field_type;
 	}
 
 	private function is_repeater_field($field) {
