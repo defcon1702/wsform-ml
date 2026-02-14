@@ -264,12 +264,7 @@
 
 			if (!container) return;
 
-			if (missingTranslations.length > 0) {
-				warningContainer.style.display = 'flex';
-				missingCount.textContent = `${missingTranslations.length} fehlende Übersetzung(en) gefunden`;
-			} else {
-				warningContainer.style.display = 'none';
-			}
+			warningContainer.style.display = 'none';
 
 			const fieldGroups = new Map();
 

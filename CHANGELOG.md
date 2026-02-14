@@ -5,6 +5,14 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.1] - 2026-02-14
+
+### Changed
+- **UI Verbesserung: Infofeld mit fehlenden Übersetzungen entfernt**
+  - Infofeld "X fehlende Übersetzung(en) gefunden" wird nicht mehr angezeigt
+  - Farbmarkierungen (rote Warnsymbole) reichen zur Kennzeichnung aus
+  - Reduziert visuelle Unordnung im Admin-Interface
+
 ## [1.5.0] - 2026-02-14
 
 ### BREAKING CHANGE
