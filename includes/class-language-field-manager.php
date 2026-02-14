@@ -109,10 +109,13 @@ class WSForm_ML_Language_Field_Manager {
 			
 			// Meta-Daten für Hidden Field
 			$field->meta = (object)[
-				'hidden' => 'on',
+				'hidden' => '',
+				'hidden_bypass' => '',
 				'exclude_email' => '',
 				'label_render' => '',
-				'default_value' => ''
+				'default_value' => '',
+				'class_field_wrapper' => '',
+				'class_field' => ''
 			];
 
 			// Speichere Field in DB
@@ -124,6 +127,9 @@ class WSForm_ML_Language_Field_Manager {
 					'error' => __('Field konnte nicht erstellt werden', 'wsform-ml')
 				];
 			}
+
+			// Publiziere Formular, damit WSForm das neue Feld erkennt
+			$ws_form->db_publish();
 
 			// Speichere Konfiguration
 			$this->save_field_config($form_id, $field_id);

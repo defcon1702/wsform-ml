@@ -5,6 +5,23 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.3] - 2026-02-14
+
+### Fixed
+
+- **Sprachfeld**: Formular wird nach Erstellung publiziert
+  - `db_publish()` wird aufgerufen, damit WSForm das neue Feld sofort erkennt
+  - Feld muss nicht mehr manuell editiert werden
+- **Sprachfeld**: Eye Icons entfernt
+  - Meta-Daten korrigiert (`hidden`, `hidden_bypass` leer)
+  - Feld wird als normales Hidden Field ohne Conditional Logic angezeigt
+
+### Known Issues
+
+- **Tabs-Akkordion**: Verschwindet nach Scan (wird in v1.2.4 behoben)
+  - Ursache wird noch analysiert
+  - Workaround: Seite neu laden nach Scan
+
 ## [1.2.2] - 2026-02-14
 
 ### Fixed
