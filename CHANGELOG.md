@@ -5,6 +5,26 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.5.3] - 2026-02-14
+
+### Fixed
+- **CRITICAL: field_id Kollision zwischen Groups und Feldern**
+  - Problem: Group Labels verwendeten positive group->id als field_id
+  - Group ID 4 → field_id = 4 ❌
+  - Echtes Feld ID 4 → field_id = 4 ❌
+  - Resultat: Kollision! Nur ein Feld wird im Admin-Interface angezeigt
+  - Symptom: Tab 2 fehlt, Nachname-Feld erscheint unter Tab 1
+  - Lösung: Verwende negative group->id → -4, -6 (keine Kollision)
+  - Group ID 4 → field_id = -4 ✅
+  - Echtes Feld ID 4 → field_id = 4 ✅
+  - Stabil bei Tab-Reihenfolge-Änderungen ✅
+
+### Technical Details
+- Scanner: `$group_field_id = -($group->id)` statt `$group->id`
+- Renderer: `$group_label_key = (-($group->id)) . "::group_label"`
+- Negative IDs vermeiden Kollision mit echten Feld-IDs
+- Weiterhin stabil basierend auf group->id (nicht group_index)
+
 ## [1.5.2] - 2026-02-14
 
 ### Fixed

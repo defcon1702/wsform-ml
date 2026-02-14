@@ -84,11 +84,11 @@ class WSForm_ML_Renderer {
 
 		foreach ($form_object->groups as $group_index => $group) {
 			// Übersetze Group Label (Tab-Name)
-			// WICHTIG: Verwende group->id (WSForm's echte Group ID) statt group_index!
-			// Scanner speichert mit group->id als field_id (z.B. 4, 6)
-			// Translation Map Key: "{field_id}::{property_type}" → "4::group_label"
+			// WICHTIG: Verwende -group->id (NEGATIV!) um Kollision mit echten Feld-IDs zu vermeiden
+			// Scanner speichert mit -group->id als field_id (z.B. -4, -6)
+			// Translation Map Key: "{field_id}::{property_type}" → "-4::group_label"
 			if (isset($group->id)) {
-				$group_label_key = "{$group->id}::group_label";
+				$group_label_key = (-($group->id)) . "::group_label";
 				if (isset($translation_map[$group_label_key])) {
 					$group->label = $translation_map[$group_label_key];
 				}
