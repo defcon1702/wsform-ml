@@ -5,6 +5,17 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.2] - 2026-02-14
+
+### Fixed
+
+- **Settings-Seite**: Sprachfeld-Integration wird jetzt korrekt angezeigt
+  - `render_settings_page` ruft nun `WSForm_ML_Settings_Page::instance()` auf
+  - Alte View-Datei wurde durch neue Settings-Klasse ersetzt
+- **Tabs-Akkordion**: Group Labels (Tabs) werden im Admin korrekt angezeigt
+  - Badge "tab" für Group Labels hinzugefügt (grüner Hintergrund)
+  - `field_type === 'group'` wird korrekt erkannt
+
 ## [1.2.1] - 2026-02-14
 
 ### Fixed

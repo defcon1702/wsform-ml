@@ -425,6 +425,11 @@
   color: #856404;
 }
 
+.wsform-ml-field-badge.tab {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
 .wsform-ml-field-body {
   padding: 15px;
   display: none;

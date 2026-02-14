@@ -94,6 +94,8 @@ class WSForm_ML_Admin_Menu {
 	}
 
 	public function render_settings_page() {
-		include WSFORM_ML_PLUGIN_DIR . 'admin/views/settings-page.php';
+		// Settings-Seite wird von WSForm_ML_Settings_Page gerendert
+		$settings_page = WSForm_ML_Settings_Page::instance();
+		$settings_page->render_settings_page();
 	}
 }

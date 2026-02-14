@@ -335,7 +335,7 @@
 
 			container.innerHTML = globalSaveBtn + Array.from(fieldGroups.values()).map(group => {
 				const field = group.field;
-				const fieldBadge = field.is_repeater ? 'repeater' : (field.has_options ? 'option' : '');
+				const fieldBadge = field.field_type === 'group' ? 'tab' : (field.is_repeater ? 'repeater' : (field.has_options ? 'option' : ''));
 
 				// Prüfe ob alle Properties übersetzt sind
 				const hasUntranslated = group.properties.some(prop => {
