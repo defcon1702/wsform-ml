@@ -284,26 +284,27 @@ class WSForm_ML_Field_Scanner {
 				}
 				
 				foreach ($row->data as $col_index => $value) {
-					if (empty($value)) {
-						continue;
-					}
-					
-					// WICHTIG: Bei Preis-Feldern nur die erste Spalte (Label) übersetzen!
-					// Spalte 0: Label (übersetzbar)
-					// Spalte 1: Value/ID (nicht übersetzbar)
-					// Spalte 2: Price (nicht übersetzbar)
-					// Spalte 3: Currency (nicht übersetzbar)
-					if ($is_price_field && $col_index > 0) {
-						continue; // Überspringe Value, Price, Currency Spalten
-					}
-					
-					$options[] = [
-						'type' => 'option',
-						'path' => "meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}",
-						'value' => $value,
-						'context' => "option_{$row_index}_col{$col_index}"
-					];
+				// WICHTIG: Bei Preis-Feldern nur die erste Spalte (Label) übersetzen!
+				// Spalte 0: Label (übersetzbar)
+				// Spalte 1: Value/ID (nicht übersetzbar)
+				// Spalte 2: Price (nicht übersetzbar)
+				// Spalte 3: Currency (nicht übersetzbar)
+				if ($is_price_field && $col_index > 0) {
+					continue; // Überspringe Value, Price, Currency Spalten
 				}
+				
+				// Prüfe ob Wert leer ist (aber erlaube "0"!)
+				// empty("0") = true, deshalb !== '' verwenden
+				if (!isset($value) || $value === '' || $value === null) {
+					continue;
+				}
+				
+				$options[] = [
+					'type' => 'option',
+					'path' => "meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}",
+					'value' => $value,
+					'context' => "option_{$row_index}_col{$col_index}"
+				];
 			}
 		}
 

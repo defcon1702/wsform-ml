@@ -5,6 +5,22 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.4.1] - 2026-02-14
+
+### Fixed
+- **Scanner empty() Bug bei Preis-Feldern**
+  - Problem: `empty("0")` = `true` in PHP
+  - Resultat: Optionen mit Wert "0" wurden nicht gescannt
+  - Lösung: Verwende `!isset($value) || $value === '' || $value === null` statt `empty($value)`
+  - Betrifft: Alle Option-Felder (select, radio, checkbox, price_*)
+  - Verhindert: Fehlende Optionen im Scanner
+
+### Technical Details
+- PHP's `empty()` Funktion behandelt "0" als leer
+- Bei Preis-Feldern kann die Value-Spalte "0" sein
+- Neue Validierung erlaubt "0" als gültigen Wert
+- Nur echte leere Werte (null, '', undefined) werden übersprungen
+
 ## [1.4.0] - 2026-02-14
 
 ### Refactoring
