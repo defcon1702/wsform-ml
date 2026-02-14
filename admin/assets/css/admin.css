@@ -65,6 +65,7 @@
 .wsform-ml-field-header.wsform-ml-field-untranslated {
   border-left: 4px solid #f0ad4e;
   background-color: #fffbf0;
+  position: relative;
 }
 
 .wsform-ml-field-header.wsform-ml-field-untranslated .wsform-ml-field-title {
@@ -74,10 +75,11 @@
 
 .wsform-ml-field-header.wsform-ml-field-untranslated::before {
   content: '⚠';
-  position: absolute;
-  left: -20px;
+  display: inline-block;
+  margin-right: 8px;
   color: #f0ad4e;
   font-size: 16px;
+  vertical-align: middle;
 }
 
 .wsform-ml-save-all {

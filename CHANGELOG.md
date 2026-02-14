@@ -5,6 +5,36 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.0] - 2026-02-14
+
+### ⚠️ BREAKING CHANGE
+- **Translation Lookup auf field_id umgestellt** (statt field_path)
+  - Problem: field_path ändert sich beim Hinzufügen/Entfernen von Feldern
+  - Resultat: Übersetzungen wurden verschoben (z.B. "Price Select" zeigte "Vorname")
+  - Lösung: Verwende field_id als PRIMARY Key (stabil, ändert sich nicht)
+  - **WICHTIG**: Alte Übersetzungen funktionieren nicht mehr - Formular neu scannen und Übersetzungen neu eingeben!
+
+### Fixed
+- **400 Bad Request beim Speichern**
+  - Problem: parseInt(field_id) gab NaN zurück wenn field_id String war
+  - Lösung: Entferne parseInt() in admin.js, verwende field_id direkt
+- **Accordion-Icons wurden nicht angezeigt**
+  - Problem: ::before Pseudo-Element mit absolute Position funktionierte nicht
+  - Lösung: Verwende inline-block mit margin statt absolute Position
+
+### Changed
+- Translation Manager: get_translation() sucht nur nach field_id (ohne field_path)
+- Renderer: build_translation_map() verwendet field_id als Key
+- Renderer: apply_translations() verwendet field->id für Lookup
+- Renderer: translate_options() verwendet field_id für Options
+- Admin JS: field_id wird nicht mehr mit parseInt() konvertiert
+
+### Technical Details
+- field_id ist stabil und ändert sich nicht beim Umstrukturieren
+- field_path ist nur noch zur Information/Debugging
+- Translation Key Format: `{field_id}::{property_type}`
+- Options Key Format: `{field_id}.meta.data_grid_{type}.groups.{g}.rows.{r}.data.{c}::option`
+
 ## [1.2.9] - 2026-02-14
 
 ### Fixed

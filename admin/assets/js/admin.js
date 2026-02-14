@@ -493,7 +493,7 @@
 				for (const textarea of textareas) {
 					const data = {
 						form_id: parseInt(textarea.dataset.formId),
-						field_id: parseInt(textarea.dataset.fieldId),
+						field_id: textarea.dataset.fieldId, // Nicht parseInt() - kann String sein!
 						field_path: textarea.dataset.fieldPath,
 						property_type: textarea.dataset.propertyType,
 						language_code: WSFormML.currentLanguage,

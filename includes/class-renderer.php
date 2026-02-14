@@ -67,8 +67,9 @@ class WSForm_ML_Renderer {
 		$map = [];
 
 		foreach ($translations as $translation) {
-			// Standard Key: field_path::property_type
-			$key = $translation->field_path . '::' . $translation->property_type;
+			// WICHTIG: Verwende field_id als Key (stabil!) statt field_path (instabil!)
+			// field_path ändert sich beim Hinzufügen/Entfernen von Feldern
+			$key = $translation->field_id . '::' . $translation->property_type;
 			$map[$key] = $translation->translated_value;
 			
 		}
@@ -82,9 +83,8 @@ class WSForm_ML_Renderer {
 		}
 
 		foreach ($form_object->groups as $group_index => $group) {
-			// Übersetze Group Label (Tab-Name)
-			$group_path = "groups.{$group_index}";
-			$group_label_key = "{$group_path}::group_label";
+			// Übersetze Group Label (Tab-Name) - Groups haben keine field_id, nutze group_index
+			$group_label_key = "group_{$group_index}::group_label";
 			if (isset($translation_map[$group_label_key])) {
 				$group->label = $translation_map[$group_label_key];
 			}
@@ -99,8 +99,8 @@ class WSForm_ML_Renderer {
 				}
 
 				foreach ($section->fields as $field_index => $field) {
-					$field_path = "groups.{$group_index}.sections.{$section_index}.fields.{$field_index}";
-					$this->translate_field($field, $field_path, $translation_map);
+					// Verwende field->id statt field_path für Translation Lookup
+					$this->translate_field($field, $translation_map);
 				}
 			}
 		}
@@ -108,9 +108,15 @@ class WSForm_ML_Renderer {
 		return $form_object;
 	}
 
-	private function translate_field(&$field, $field_path, $translation_map) {
-		if (isset($translation_map["{$field_path}::label"])) {
-			$field->label = $translation_map["{$field_path}::label"];
+	private function translate_field(&$field, $translation_map) {
+		// Verwende field->id als Key (stabil!)
+		$field_id = $field->id ?? null;
+		if (!$field_id) {
+			return;
+		}
+		
+		if (isset($translation_map["{$field_id}::label"])) {
+			$field->label = $translation_map["{$field_id}::label"];
 		}
 
 		if (isset($field->meta)) {
@@ -133,9 +139,9 @@ class WSForm_ML_Renderer {
 			];
 
 			foreach ($meta_properties as $prop) {
-				// Prüfe beide Key-Formate für Kompatibilität
-				$key1 = "{$field_path}::{$prop}";
-				$key2 = "{$field_path}::meta.{$prop}";
+				// Verwende field_id als Key
+				$key1 = "{$field_id}::{$prop}";
+				$key2 = "{$field_id}::meta.{$prop}";
 				
 				if (isset($translation_map[$key1])) {
 					$field->meta->{$prop} = $translation_map[$key1];
@@ -147,16 +153,16 @@ class WSForm_ML_Renderer {
 			// Prüfe field-type-spezifische data_grid Properties
 			$data_grid_property = 'data_grid_' . ($field->type ?? '');
 			if (isset($field->meta->{$data_grid_property}->groups)) {
-				$this->translate_options($field, $field_path, $translation_map, $data_grid_property);
+				$this->translate_options($field, $field_id, $translation_map, $data_grid_property);
 			}
 		}
 
 		if (isset($field->type) && $field->type === 'repeater' && isset($field->meta->repeater_sections)) {
-			$this->translate_repeater_fields($field, $field_path, $translation_map);
+			$this->translate_repeater_fields($field, $field_id, $translation_map);
 		}
 	}
 
-	private function translate_options(&$field, $field_path, $translation_map, $data_grid_property) {
+	private function translate_options(&$field, $field_id, $translation_map, $data_grid_property) {
 		$data_grid = $field->meta->{$data_grid_property};
 		
 		foreach ($data_grid->groups as $group_index => $group) {
@@ -167,27 +173,27 @@ class WSForm_ML_Renderer {
 			foreach ($group->rows as $row_index => $row) {
 				if (isset($row->data) && is_array($row->data)) {
 					foreach ($row->data as $col_index => $value) {
-						// Key-Format aus Admin: groups.0.sections.0.fields.9.meta.data_grid_select.groups.0.rows.0.data.0::option
-						$key = "{$field_path}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
-						
-						if (isset($translation_map[$key])) {
-							$row->data[$col_index] = $translation_map[$key];
-						}
+					// Verwende field_id für Options
+					// Format: field_id.meta.data_grid_TYPE.groups.X.rows.Y.data.Z::option
+					$key = "{$field_id}.meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}::option";
+					
+					if (isset($translation_map[$key])) {
+						$row->data[$col_index] = $translation_map[$key];
 					}
 				}
 			}
 		}
 	}
 
-	private function translate_repeater_fields(&$field, $parent_path, $translation_map) {
+	private function translate_repeater_fields(&$field, $parent_field_id, $translation_map) {
 		foreach ($field->meta->repeater_sections as $section_index => $section) {
 			if (empty($section->fields)) {
 				continue;
 			}
 
 			foreach ($section->fields as $field_index => $repeater_field) {
-				$field_path = "{$parent_path}.meta.repeater_sections.{$section_index}.fields.{$field_index}";
-				$this->translate_field($repeater_field, $field_path, $translation_map);
+				// Repeater-Felder haben ihre eigene field_id
+				$this->translate_field($repeater_field, $translation_map);
 			}
 		}
 	}

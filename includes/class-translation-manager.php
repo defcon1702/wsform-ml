@@ -13,20 +13,19 @@ class WSForm_ML_Translation_Manager {
 		return self::$instance;
 	}
 
-	public function get_translation($form_id, $field_id, $field_path, $property_type, $language_code) {
+	private function get_translation($form_id, $field_id, $field_path, $property_type, $language_code) {
 		global $wpdb;
 		$table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_TRANSLATIONS);
 
-		$translation = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table WHERE form_id = %d AND field_id = %d AND field_path = %s AND property_type = %s AND language_code = %s",
+		// Suche primär nach field_id (stabil!) statt field_path (instabil!)
+		// field_path ändert sich beim Hinzufügen/Entfernen von Feldern
+		return $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table WHERE form_id = %d AND field_id = %s AND property_type = %s AND language_code = %s",
 			$form_id,
 			$field_id,
-			$field_path,
 			$property_type,
 			$language_code
 		));
-
-		return $translation;
 	}
 
 	public function save_translation($data) {
