@@ -5,6 +5,18 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.4] - 2026-02-14
+
+### Fixed
+
+- **Sprachfeld-Löschung**: Feld wird jetzt auch aus WSForm entfernt
+  - `db_delete()` wird aufgerufen, nicht nur Konfiguration gelöscht
+  - Formular wird nach Löschung publiziert
+- **Sprachfeld-Rendering**: Feld bekommt korrekte ID und name-Attribut
+  - Feld wird nach Erstellung neu geladen (`db_read()`)
+  - Meta-Daten werden korrekt gesetzt und gespeichert (`db_update()`)
+  - Feld wird sofort korrekt von WSForm gerendert
+
 ## [1.2.3] - 2026-02-14
 
 ### Fixed

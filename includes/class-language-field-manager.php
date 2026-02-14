@@ -58,6 +58,27 @@ class WSForm_ML_Language_Field_Manager {
 	 */
 	public function remove_field_config($form_id) {
 		$fields = $this->get_configured_fields();
+		
+		// Lösche das Feld aus WSForm, falls vorhanden
+		if (isset($fields[$form_id])) {
+			$field_id = $fields[$form_id];
+			
+			try {
+				$field = new WS_Form_Field();
+				$field->id = absint($field_id);
+				$field->db_delete();
+				
+				// Publiziere Formular nach Löschung
+				$ws_form = new WS_Form_Form();
+				$ws_form->id = absint($form_id);
+				$ws_form->db_publish();
+				
+				error_log("WSForm ML: Deleted language field {$field_id} from form {$form_id}");
+			} catch (Exception $e) {
+				error_log("WSForm ML: Error deleting language field - " . $e->getMessage());
+			}
+		}
+		
 		unset($fields[$form_id]);
 		return update_option($this->option_name, $fields);
 	}
@@ -106,19 +127,8 @@ class WSForm_ML_Language_Field_Manager {
 			$field->section_id = $first_section->id;
 			$field->type = 'hidden';
 			$field->label = __('Sprache / Language', 'wsform-ml');
-			
-			// Meta-Daten für Hidden Field
-			$field->meta = (object)[
-				'hidden' => '',
-				'hidden_bypass' => '',
-				'exclude_email' => '',
-				'label_render' => '',
-				'default_value' => '',
-				'class_field_wrapper' => '',
-				'class_field' => ''
-			];
 
-			// Speichere Field in DB
+			// Speichere Field in DB (WSForm setzt automatisch Standard-Meta-Daten)
 			$field_id = $field->db_create();
 
 			if (!$field_id) {
@@ -127,6 +137,21 @@ class WSForm_ML_Language_Field_Manager {
 					'error' => __('Field konnte nicht erstellt werden', 'wsform-ml')
 				];
 			}
+
+			// Lade das Feld neu, um die von WSForm gesetzten Meta-Daten zu erhalten
+			$field->id = $field_id;
+			$field->db_read();
+
+			// Setze nur die notwendigen Meta-Daten
+			if (!isset($field->meta)) {
+				$field->meta = new stdClass();
+			}
+			$field->meta->label_render = '';
+			$field->meta->exclude_email = '';
+			$field->meta->default_value = '';
+
+			// Speichere die aktualisierten Meta-Daten
+			$field->db_update();
 
 			// Publiziere Formular, damit WSForm das neue Feld erkennt
 			$ws_form->db_publish();
