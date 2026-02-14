@@ -177,7 +177,75 @@ class WSForm_ML_Exporter {
 
 ## 🟡 PRIORITÄT 2 - Wichtige Verbesserungen
 
-### 2.1 Input Sanitization verbessern
+### 2.1 Plugin-Internationalisierung (i18n)
+
+**Status:** 🟡 Mittel  
+**Aufwand:** 3-4 Stunden  
+**Version:** 1.3.0
+
+**Feature:**
+Vollständige Übersetzung der Plugin-UI in Deutsch und Englisch mittels .po/.mo Dateien.
+
+**Aktueller Stand:**
+- Plugin verwendet `__()` und `_e()` Funktionen
+- Text Domain: `wsform-ml`
+- Aber: Keine .po/.mo Dateien vorhanden
+
+**Implementierung:**
+
+1. **Erstelle .pot Template:**
+```bash
+# Mit WP-CLI
+wp i18n make-pot . languages/wsform-ml.pot
+
+# Oder manuell mit Poedit
+```
+
+2. **Erstelle Übersetzungen:**
+```
+languages/
+├── wsform-ml.pot (Template)
+├── wsform-ml-de_DE.po (Deutsch)
+├── wsform-ml-de_DE.mo (Deutsch, kompiliert)
+├── wsform-ml-en_US.po (Englisch)
+└── wsform-ml-en_US.mo (Englisch, kompiliert)
+```
+
+3. **Lade Übersetzungen:**
+```php
+// wsform-ml.php
+public function load_textdomain() {
+    load_plugin_textdomain(
+        'wsform-ml',
+        false,
+        dirname(WSFORM_ML_PLUGIN_BASENAME) . '/languages'
+    );
+}
+
+// In __construct():
+add_action('plugins_loaded', [$this, 'load_textdomain']);
+```
+
+**Zu übersetzen:**
+- Admin-Menü & Settings-Seite
+- Fehlermeldungen & Erfolgsmeldungen
+- Feld-Labels & Beschreibungen
+- Tooltips & Hilfe-Texte
+- Button-Texte
+
+**Tools:**
+- [Poedit](https://poedit.net/) - GUI für .po Dateien
+- [WP-CLI i18n](https://developer.wordpress.org/cli/commands/i18n/) - CLI-Tools
+- [Loco Translate](https://wordpress.org/plugins/loco-translate/) - WordPress Plugin
+
+**Qualitätssicherung:**
+- Teste mit `WPLANG` in wp-config.php
+- Prüfe alle Admin-Seiten in beiden Sprachen
+- Achte auf Platzhalter: `sprintf(__('Form %s', 'wsform-ml'), $id)`
+
+---
+
+### 2.2 Input Sanitization verbessern
 
 **Status:** 🟡 Mittel  
 **Aufwand:** 2-3 Stunden  
