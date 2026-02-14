@@ -240,33 +240,35 @@ class WSForm_ML_Field_Scanner {
 		$option_field_types = ['select', 'radio', 'checkbox', 'price_select', 'price_radio', 'price_checkbox'];
 		$is_option_type = in_array($field->type ?? '', $option_field_types);
 		
-		if ($is_option_type) {
-			error_log("WSForm ML Scanner: Field {$field->id} is option type ({$field->type})");
-			error_log("WSForm ML Scanner: has meta? " . (isset($field->meta) ? 'YES' : 'NO'));
-			if (isset($field->meta)) {
-				error_log("WSForm ML Scanner: has data_grid? " . (isset($field->meta->data_grid) ? 'YES' : 'NO'));
-				if (isset($field->meta->data_grid)) {
-					error_log("WSForm ML Scanner: data_grid structure: " . json_encode($field->meta->data_grid));
-				} else {
-					error_log("WSForm ML Scanner: meta keys: " . implode(', ', array_keys((array)$field->meta)));
-				}
-			}
+		if (!$is_option_type || !isset($field->meta)) {
+			return false;
 		}
 		
-		return $is_option_type && isset($field->meta->data_grid);
+		// WSForm nutzt field-type-spezifische data_grid Properties:
+		// checkbox -> data_grid_checkbox
+		// radio -> data_grid_radio
+		// select -> data_grid_select
+		// price_* -> data_grid_price_*
+		$data_grid_property = 'data_grid_' . $field->type;
+		
+		return isset($field->meta->{$data_grid_property});
 	}
 
 	private function extract_options($field) {
 		$options = [];
 		
-		if (!isset($field->meta->data_grid->groups)) {
-			error_log("WSForm ML Scanner: Field {$field->id} has no data_grid.groups");
+		// Bestimme field-type-spezifische data_grid Property
+		$data_grid_property = 'data_grid_' . $field->type;
+		
+		if (!isset($field->meta->{$data_grid_property}->groups)) {
+			error_log("WSForm ML Scanner: Field {$field->id} has no {$data_grid_property}.groups");
 			return $options;
 		}
 
-		error_log("WSForm ML Scanner: Extracting options for field {$field->id} ({$field->type})");
+		$data_grid = $field->meta->{$data_grid_property};
+		error_log("WSForm ML Scanner: Extracting options for field {$field->id} ({$field->type}) from {$data_grid_property}");
 
-		foreach ($field->meta->data_grid->groups as $group_index => $group) {
+		foreach ($data_grid->groups as $group_index => $group) {
 			if (!isset($group->rows)) {
 				continue;
 			}
@@ -279,7 +281,7 @@ class WSForm_ML_Field_Scanner {
 						if (!empty($value)) {
 							$options[] = [
 								'type' => 'option',
-								'path' => "meta.data_grid.groups.0.rows.{$row_index}.data.{$col_index}",
+								'path' => "meta.{$data_grid_property}.groups.{$group_index}.rows.{$row_index}.data.{$col_index}",
 								'value' => $value,
 								'context' => "option_{$row_index}_{$col_index}"
 							];
