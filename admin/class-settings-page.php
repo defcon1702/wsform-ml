@@ -268,22 +268,30 @@ class WSForm_ML_Settings_Page {
 									</thead>
 									<tbody>
 										<?php foreach ($languages as $lang): ?>
+											<?php
+												// Polylang kann Arrays oder Objekte zurückgeben - normalisiere zu Array
+												$lang_data = is_object($lang) ? (array) $lang : $lang;
+												$name = $lang_data['name'] ?? '';
+												$code = $lang_data['code'] ?? '';
+												$flag_url = $lang_data['flag_url'] ?? '';
+												$is_default = $lang_data['is_default'] ?? false;
+											?>
 											<tr>
 												<td>
-													<?php if (!empty($lang->flag_url)): ?>
-														<img src="<?php echo esc_url($lang->flag_url); ?>" alt="<?php echo esc_attr($lang->name); ?>" style="width: 16px; height: 12px; margin-right: 5px; vertical-align: middle;">
+													<?php if (!empty($flag_url)): ?>
+														<img src="<?php echo esc_url($flag_url); ?>" alt="<?php echo esc_attr($name); ?>" style="width: 16px; height: 12px; margin-right: 5px; vertical-align: middle;">
 													<?php endif; ?>
-													<strong><?php echo esc_html($lang->name); ?></strong>
-													<?php if ($lang->is_default): ?>
+													<strong><?php echo esc_html($name); ?></strong>
+													<?php if ($is_default): ?>
 														<span class="wsform-ml-status-badge active" style="margin-left: 5px; font-size: 11px;">Standard</span>
 													<?php endif; ?>
 												</td>
-												<td><code style="font-size: 13px; font-weight: bold;"><?php echo esc_html($lang->code); ?></code></td>
+												<td><code style="font-size: 13px; font-weight: bold;"><?php echo esc_html($code); ?></code></td>
 												<td class="description">
 													<?php 
 														printf(
 															__('Wird gesetzt wenn Besucher die Seite in %s aufruft', 'wsform-ml'),
-															'<strong>' . esc_html($lang->name) . '</strong>'
+															'<strong>' . esc_html($name) . '</strong>'
 														);
 													?>
 												</td>
