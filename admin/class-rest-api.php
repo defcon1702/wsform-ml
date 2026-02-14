@@ -197,9 +197,15 @@ class WSForm_ML_REST_API {
 			return new WP_Error('wsform_not_found', __('WS Form nicht installiert', 'wsform-ml'), ['status' => 404]);
 		}
 		
+		// Sauberer Output Buffer für JSON Response
+		ob_start();
+		
 		try {
 			$scanner = WSForm_ML_Field_Scanner::instance();
 			$result = $scanner->scan_form($form_id);
+
+			// Verwerfe jeglichen Output
+			ob_end_clean();
 
 			if ($result['success']) {
 				return rest_ensure_response($result);
@@ -207,6 +213,7 @@ class WSForm_ML_REST_API {
 				return new WP_Error('scan_failed', $result['error'], ['status' => 500]);
 			}
 		} catch (Exception $e) {
+			ob_end_clean();
 			error_log('WSForm ML: Scan error - ' . $e->getMessage());
 			return new WP_Error('scan_exception', $e->getMessage(), ['status' => 500]);
 		}

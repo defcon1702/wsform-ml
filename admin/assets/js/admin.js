@@ -323,7 +323,7 @@
 			const globalSaveBtn = `
 				<div class="wsform-ml-global-actions">
 					<button class="button button-primary button-large wsform-ml-save-all" id="wsform-ml-save-all-btn">
-						<span class="dashicons dashicons-yes"></span>
+						<span class="dashicons dashicons-saved"></span>
 						Alle Änderungen speichern
 					</button>
 				</div>
@@ -373,7 +373,7 @@
 					<div class="wsform-ml-property-original">${this.escapeHtml(prop.value)}</div>
 					<div class="wsform-ml-property-input">
 						<textarea 
-							class="wsform-ml-translation-input"
+							class="wsform-ml-translation-input${!translatedValue ? ' untranslated' : ''}"
 							data-form-id="${this.currentFormId}"
 							data-field-id="${field.field_id}"
 							data-field-path="${prop.field_path}"
@@ -505,9 +505,9 @@
 					}
 				}
 
-				btn.innerHTML = `<span class="dashicons dashicons-yes"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
+				btn.innerHTML = `<span class="dashicons dashicons-saved"></span> ${saved} gespeichert${errors > 0 ? `, ${errors} Fehler` : ''}`;
 				setTimeout(() => {
-					btn.innerHTML = '<span class="dashicons dashicons-yes"></span> Alle Änderungen speichern';
+					btn.innerHTML = '<span class="dashicons dashicons-saved"></span> Alle Änderungen speichern';
 				}, 3000);
 
 				btn.classList.remove('is-loading');

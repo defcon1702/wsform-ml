@@ -25,22 +25,8 @@ class WSForm_ML_Settings_Page {
 	private function __construct() {
 		$this->feature_manager = WSForm_ML_Feature_Manager::instance();
 		
-		add_action('admin_menu', [$this, 'add_settings_page'], 20);
+		// Menü wird bereits in class-admin-menu.php registriert
 		add_action('admin_post_wsform_ml_toggle_feature', [$this, 'handle_feature_toggle']);
-	}
-
-	/**
-	 * Füge Settings-Seite zum Admin-Menü hinzu
-	 */
-	public function add_settings_page() {
-		add_submenu_page(
-			'wsform-ml',
-			__('Einstellungen', 'wsform-ml'),
-			__('Einstellungen', 'wsform-ml'),
-			'manage_options',
-			'wsform-ml-settings',
-			[$this, 'render_settings_page']
-		);
 	}
 
 	/**
