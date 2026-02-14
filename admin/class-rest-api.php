@@ -259,15 +259,30 @@ class WSForm_ML_REST_API {
 	public function save_translation($request) {
 		$data = $request->get_json_params();
 		
-		$required_fields = ['form_id', 'field_id', 'field_path', 'property_type', 'language_code', 'translated_value'];
-		foreach ($required_fields as $field) {
-			if (!isset($data[$field])) {
-				return new WP_Error('missing_field', sprintf(__('Fehlendes Feld: %s', 'wsform-ml'), $field), ['status' => 400]);
-			}
+		// Sanitize Input
+		$sanitized = [
+			'form_id' => absint($data['form_id'] ?? 0),
+			'field_id' => sanitize_text_field($data['field_id'] ?? ''),
+			'field_path' => sanitize_text_field($data['field_path'] ?? ''),
+			'property_type' => sanitize_key($data['property_type'] ?? ''),
+			'language_code' => sanitize_key($data['language_code'] ?? ''),
+			'original_value' => wp_kses_post($data['original_value'] ?? ''),
+			'translated_value' => wp_kses_post($data['translated_value'] ?? '')
+		];
+		
+		// Validiere erforderliche Felder
+		if (!$sanitized['form_id'] || empty($sanitized['field_id']) || empty($sanitized['field_path']) || 
+		    empty($sanitized['property_type']) || empty($sanitized['language_code'])) {
+			return new WP_Error('invalid_data', __('Ungültige oder fehlende Pflichtfelder', 'wsform-ml'), ['status' => 400]);
+		}
+		
+		// Validiere language_code Format (z.B. 'de', 'en', 'es')
+		if (!preg_match('/^[a-z]{2}(_[A-Z]{2})?$/', $sanitized['language_code'])) {
+			return new WP_Error('invalid_language', __('Ungültiger Sprachcode', 'wsform-ml'), ['status' => 400]);
 		}
 
 		$translation_manager = WSForm_ML_Translation_Manager::instance();
-		$id = $translation_manager->save_translation($data);
+		$id = $translation_manager->save_translation($sanitized);
 
 		return rest_ensure_response([
 			'success' => true,

@@ -99,11 +99,29 @@ class WSForm_ML_Translation_Manager {
 		$cache_table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_FIELD_CACHE);
 		$trans_table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_TRANSLATIONS);
 
+		// 1. Lade alle gecachten Felder
 		$cached_fields = $wpdb->get_results($wpdb->prepare(
 			"SELECT * FROM $cache_table WHERE form_id = %d",
 			$form_id
 		));
 
+		// 2. Lade alle existierenden Übersetzungen für Form + Sprache auf einmal (N+1 Fix!)
+		$existing_translations = $wpdb->get_results($wpdb->prepare(
+			"SELECT field_id, field_path, property_type 
+			 FROM $trans_table 
+			 WHERE form_id = %d AND language_code = %s",
+			$form_id,
+			$language_code
+		));
+
+		// 3. Erstelle Lookup-Map für O(1) Zugriff
+		$translation_map = [];
+		foreach ($existing_translations as $trans) {
+			$key = "{$trans->field_id}::{$trans->field_path}::{$trans->property_type}";
+			$translation_map[$key] = true;
+		}
+
+		// 4. Prüfe gegen Map statt DB
 		$missing = [];
 
 		foreach ($cached_fields as $field) {
@@ -114,16 +132,9 @@ class WSForm_ML_Translation_Manager {
 			}
 
 			foreach ($translatable_props as $prop) {
-				$existing = $wpdb->get_var($wpdb->prepare(
-					"SELECT id FROM $trans_table WHERE form_id = %d AND field_id = %d AND field_path = %s AND property_type = %s AND language_code = %s",
-					$form_id,
-					$field->field_id,
-					$field->field_path,
-					$prop['type'],
-					$language_code
-				));
-
-				if (!$existing) {
+				$key = "{$field->field_id}::{$field->field_path}::{$prop['type']}";
+				
+				if (!isset($translation_map[$key])) {
 					$missing[] = [
 						'field_id' => $field->field_id,
 						'field_path' => $field->field_path,
