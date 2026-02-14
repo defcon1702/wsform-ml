@@ -307,8 +307,9 @@ class WSForm_ML_Field_Scanner {
 				];
 			}
 		}
+	}
 
-		return $options;
+	return $options;
 	}
 
 	private function extract_conditional_texts($conditional) {
