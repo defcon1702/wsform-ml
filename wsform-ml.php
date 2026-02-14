@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WSForm Multilingual
- * Plugin URI: https://github.com/yourusername/wsform-ml
- * Description: Automatische Übersetzungsverwaltung für WSForm mit Polylang-Integration. Scannt Formulare automatisch und verwaltet Übersetzungen zentral. ⚠️ WICHTIG: Vollständig mit AI entwickelt - nur auf Testumgebungen verwenden!
+ * Plugin URI: https://github.com/defcon1702/wsform-ml
+ * Description: Automatic translation management for WSForm with Polylang integration. Scans forms automatically and manages translations centrally. ⚠️ IMPORTANT: Entirely AI-generated - use only on staging environments!
  * Version: 1.2.9
  * Author: Sebastian Berger (AI-Generated)
- * Author URI: https://yourwebsite.com
+ * Author URI: https://github.com/defcon1702
  * Text Domain: wsform-ml
  * Domain Path: /languages
  * Requires at least: 5.8
