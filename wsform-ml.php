@@ -46,8 +46,13 @@ final class WSForm_ML {
 		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-polylang-integration.php';
 		require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-rest-api.php';
 		
+		// Feature Management & Native API
+		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-feature-manager.php';
+		require_once WSFORM_ML_PLUGIN_DIR . 'includes/class-native-adapter.php';
+		
 		if (is_admin()) {
 			require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-admin-menu.php';
+			require_once WSFORM_ML_PLUGIN_DIR . 'admin/class-settings-page.php';
 		}
 	}
 
@@ -74,11 +79,23 @@ final class WSForm_ML {
 			return;
 		}
 
-		WSForm_ML_Renderer::instance();
+		// Initialisiere Feature Manager
+		$feature_manager = WSForm_ML_Feature_Manager::instance();
+		
+		// Initialisiere Legacy Renderer wenn aktiviert
+		if ($feature_manager->is_enabled(WSForm_ML_Feature_Manager::FEATURE_LEGACY_RENDERER)) {
+			WSForm_ML_Renderer::instance();
+		}
+		
+		// Initialisiere Native Adapter (prüft selbst ob aktiviert)
+		WSForm_ML_Native_Adapter::instance();
+		
+		// REST API immer initialisieren
 		WSForm_ML_REST_API::instance();
 		
 		if (is_admin()) {
 			WSForm_ML_Admin_Menu::instance();
+			WSForm_ML_Settings_Page::instance();
 		}
 	}
 
