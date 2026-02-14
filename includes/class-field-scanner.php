@@ -397,24 +397,36 @@ class WSForm_ML_Field_Scanner {
 				);
 				$stats['updated_fields']++;
 			} else {
-				// INSERT neues Feld
-				$wpdb->insert(
-					$table,
-					[
-						'form_id' => $form_id,
-						'field_id' => $field_data['field_id'],
-						'field_type' => $field_data['field_type'],
-						'field_path' => $field_data['field_path'],
-						'field_label' => $field_data['field_label'],
-						'parent_field_id' => $field_data['parent_field_id'],
-						'is_repeater' => $field_data['is_repeater'],
-						'has_options' => $field_data['has_options'],
-						'translatable_properties' => json_encode($field_data['translatable_properties']),
-						'field_structure' => $field_data['field_structure'],
-						'last_scanned' => current_time('mysql')
-					]
-				);
-				$stats['new_fields']++;
+				// Prüfe nochmal ob bereits vorhanden (Race Condition bei Group Labels)
+				$double_check = $wpdb->get_row($wpdb->prepare(
+					"SELECT id FROM {$table} WHERE form_id = %d AND field_id = %s AND field_path = %s",
+					$form_id,
+					$field_data['field_id'],
+					$field_data['field_path']
+				));
+				
+				if (!$double_check) {
+					// INSERT neues Feld
+					$wpdb->insert(
+						$table,
+						[
+							'form_id' => $form_id,
+							'field_id' => $field_data['field_id'],
+							'field_type' => $field_data['field_type'],
+							'field_path' => $field_data['field_path'],
+							'field_label' => $field_data['field_label'],
+							'parent_field_id' => $field_data['parent_field_id'],
+							'is_repeater' => $field_data['is_repeater'],
+							'has_options' => $field_data['has_options'],
+							'translatable_properties' => json_encode($field_data['translatable_properties']),
+							'field_structure' => $field_data['field_structure'],
+							'last_scanned' => current_time('mysql')
+						]
+					);
+					$stats['new_fields']++;
+				} else {
+					$stats['updated_fields']++;
+				}
 			}
 		}
 
