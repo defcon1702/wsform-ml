@@ -76,8 +76,11 @@ class WSForm_ML_Renderer {
 		$map = [];
 
 		foreach ($translations as $translation) {
+			// Standard Key: field_path::property_type
 			$key = $translation->field_path . '::' . $translation->property_type;
 			$map[$key] = $translation->translated_value;
+			
+			error_log("WSForm ML: Translation Map - Key: {$key}, Type: {$translation->property_type}");
 		}
 
 		return $map;
