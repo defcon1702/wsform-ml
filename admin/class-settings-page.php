@@ -246,6 +246,62 @@ class WSForm_ML_Settings_Page {
 							<?php _e('Hinweis: Das Entfernen der Konfiguration löscht nicht das Field im Formular, sondern nur die Verknüpfung.', 'wsform-ml'); ?>
 						</p>
 					</div>
+
+					<?php if (!empty($configured_fields)): ?>
+						<div class="wsform-ml-info-box" style="margin-top: 20px;">
+							<h4><?php _e('Automatisch gesetzte Länderkürzel', 'wsform-ml'); ?></h4>
+							<p class="description">
+								<?php _e('Diese Sprachcodes werden automatisch im Frontend basierend auf der aktuellen Polylang-Sprache gesetzt:', 'wsform-ml'); ?>
+							</p>
+							<?php 
+								$polylang = WSForm_ML_Polylang_Integration::instance();
+								$languages = $polylang->get_languages();
+							?>
+							<?php if (!empty($languages)): ?>
+								<table class="wp-list-table widefat fixed striped" style="margin-top: 10px;">
+									<thead>
+										<tr>
+											<th style="width: 30%;"><?php _e('Sprache', 'wsform-ml'); ?></th>
+											<th style="width: 20%;"><?php _e('Code', 'wsform-ml'); ?></th>
+											<th><?php _e('Beschreibung', 'wsform-ml'); ?></th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php foreach ($languages as $lang): ?>
+											<tr>
+												<td>
+													<?php if (!empty($lang->flag_url)): ?>
+														<img src="<?php echo esc_url($lang->flag_url); ?>" alt="<?php echo esc_attr($lang->name); ?>" style="width: 16px; height: 12px; margin-right: 5px; vertical-align: middle;">
+													<?php endif; ?>
+													<strong><?php echo esc_html($lang->name); ?></strong>
+													<?php if ($lang->is_default): ?>
+														<span class="wsform-ml-status-badge active" style="margin-left: 5px; font-size: 11px;">Standard</span>
+													<?php endif; ?>
+												</td>
+												<td><code style="font-size: 13px; font-weight: bold;"><?php echo esc_html($lang->code); ?></code></td>
+												<td class="description">
+													<?php 
+														printf(
+															__('Wird gesetzt wenn Besucher die Seite in %s aufruft', 'wsform-ml'),
+															'<strong>' . esc_html($lang->name) . '</strong>'
+														);
+													?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+								</table>
+								<p class="description" style="margin-top: 10px;">
+									<strong><?php _e('Hinweis:', 'wsform-ml'); ?></strong>
+									<?php _e('Das Sprachfeld wird automatisch mit dem entsprechenden Code gefüllt, wenn ein Besucher das Formular in der jeweiligen Sprache öffnet. Dies ermöglicht sprachspezifische Formular-Auswertungen.', 'wsform-ml'); ?>
+								</p>
+							<?php else: ?>
+								<p class="description">
+									<?php _e('Keine Polylang-Sprachen gefunden. Bitte konfiguriere zuerst Sprachen in Polylang.', 'wsform-ml'); ?>
+								</p>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
 				<?php endif; ?>
 
 				<div class="wsform-ml-settings-info">

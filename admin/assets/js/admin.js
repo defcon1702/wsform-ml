@@ -27,8 +27,6 @@
 				return;
 			}
 
-			console.log('Rendering languages:', wsformML.languages);
-
 			const html = wsformML.languages.map(lang => `
 				<span class="wsform-ml-language-badge ${lang.is_default ? 'is-default' : ''}">
 					${lang.flag_url && lang.flag_url !== '' ? `<img src="${lang.flag_url}" alt="${lang.name}" style="width: 16px; height: 12px;">` : ''}
@@ -37,7 +35,6 @@
 				</span>
 			`).join('');
 
-			console.log('Generated HTML:', html);
 			container.innerHTML = html;
 		},
 
@@ -46,39 +43,29 @@
 			const loading = document.getElementById('wsform-ml-forms-loading');
 
 			try {
-				console.log('Loading forms from:', `${wsformML.restUrl}/forms`);
-
 				const response = await fetch(`${wsformML.restUrl}/forms`, {
 					headers: {
 						'X-WP-Nonce': wsformML.nonce
 					}
 				});
 
-				console.log('Response status:', response.status);
-
 				if (!response.ok) {
 					const responseText = await response.text();
-					console.error('API Error Response:', responseText);
 
 					let errorData = {};
 					try {
 						errorData = JSON.parse(responseText);
-					} catch (e) {
-						console.error('Could not parse error as JSON');
-					}
+					} catch (e) { }
 
-					console.error('API Error:', errorData);
 					throw new Error(errorData.message || responseText || 'Failed to load forms');
 				}
 
 				this.forms = await response.json();
-				console.log('Forms loaded:', this.forms.length);
 
 				loading.style.display = 'none';
 				this.renderForms();
 
 			} catch (error) {
-				console.error('Error loading forms:', error);
 				loading.innerHTML = `<p style="color: #d63638; padding: 20px;">Fehler beim Laden der Formulare: ${error.message}</p>`;
 			}
 		},
@@ -129,7 +116,6 @@
 			const form = this.forms.find(f => String(f.id) === String(formId));
 
 			if (!form) {
-				console.error('Form not found:', formId);
 				return;
 			}
 
@@ -147,9 +133,6 @@
 					this.fetchStats(formId)
 				]);
 
-				console.log('Loaded fields:', fields);
-				console.log('Fields count:', fields.length);
-
 				this.fields = fields;
 				this.renderStats(stats);
 				this.renderLanguageTabs();
@@ -164,7 +147,7 @@
 				}
 
 			} catch (error) {
-				console.error('Error loading form data:', error);
+				loading.innerHTML = `<p style="color: #d63638; padding: 20px;">Fehler beim Laden der Formulardaten: ${error.message}</p>`;
 			}
 		},
 
@@ -245,20 +228,16 @@
 					this.fetchMissingTranslations(formId, langCode)
 				]);
 
-				console.log('Loaded translations:', translations.length);
-				console.log('Missing translations:', missing.length);
-
 				this.translations[langCode] = {};
 				translations.forEach(trans => {
 					const key = `${trans.field_path}::${trans.property_type}`;
 					this.translations[langCode][key] = trans;
 				});
 
-				console.log('Calling renderFields with', this.fields.length, 'fields');
 				this.renderFields(missing);
 
 			} catch (error) {
-				console.error('Error loading translations:', error);
+				loading.innerHTML = `<p style="color: #d63638; padding: 20px;">Fehler beim Laden der Übersetzungen: ${error.message}</p>`;
 			}
 		},
 
