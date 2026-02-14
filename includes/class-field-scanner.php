@@ -113,10 +113,14 @@ class WSForm_ML_Field_Scanner {
 
 		foreach ($form_object->groups as $group_index => $group) {
 			// Scanne Group Label (Tab-Name)
+			// Verwende negative IDs für Group Labels: -(group_index + 1)
+			// Group 0 → -1, Group 1 → -2, usw.
+			// Das vermeidet Konflikte mit echten WSForm Field IDs (immer positiv)
 			if (!empty($group->label)) {
 				$group_path = "groups.{$group_index}";
+				$group_field_id = -($group_index + 1);
 				$fields[] = [
-					'field_id' => "group_{$group_index}",
+					'field_id' => $group_field_id,
 					'field_path' => $group_path,
 					'field_type' => 'group',
 					'field_label' => "Tab: {$group->label}",
@@ -132,7 +136,7 @@ class WSForm_ML_Field_Scanner {
 					'parent_field_id' => null,
 					'field_structure' => null
 				];
-				error_log("WSForm ML Scanner: Found group label: {$group->label}");
+				error_log("WSForm ML Scanner: Found group label: {$group->label} (field_id: {$group_field_id})");
 			}
 			
 			if (empty($group->sections)) {
@@ -352,17 +356,38 @@ class WSForm_ML_Field_Scanner {
 		return $fields;
 	}
 
-	private function sync_fields_to_cache($form_id, $discovered_fields, &$stats) {
+	private function sync_fields_to_cache($form_id, $discovered_fields) {
 		global $wpdb;
 		$table = WSForm_ML_Database::get_table_name(WSForm_ML_Database::TABLE_FIELD_CACHE);
 
-		// Lade existierende Felder mit field_id + field_path als Key
+		$stats = [
+			'fields_found' => count($discovered_fields),
+			'new_fields' => 0,
+			'updated_fields' => 0,
+			'deleted_fields' => 0
+		];
+
+		// Lösche alte Group Labels mit field_id=0 (Bug aus v1.2.3)
+		// Diese wurden fälschlicherweise als Strings gespeichert und zu 0 konvertiert
+		$deleted = $wpdb->delete(
+			$table,
+			[
+				'form_id' => $form_id,
+				'field_id' => 0,
+				'field_type' => 'group'
+			]
+		);
+		if ($deleted) {
+			error_log("WSForm ML Scanner: Deleted {$deleted} old group labels with field_id=0");
+		}
+
+		// Hole alle existierenden Felder für dieses Form
 		$existing_fields = $wpdb->get_results($wpdb->prepare(
 			"SELECT field_id, field_path FROM $table WHERE form_id = %d",
 			$form_id
 		), ARRAY_A);
 
-		// Erstelle Lookup-Map mit field_id + field_path
+		// Lade existierende Felder mit field_id + field_path als Key
 		$existing_map = [];
 		foreach ($existing_fields as $field) {
 			$key = $field['field_id'] . '::' . $field['field_path'];

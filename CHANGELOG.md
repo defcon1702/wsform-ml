@@ -5,6 +5,17 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.5] - 2026-02-14
+
+### Fixed
+
+- **Tabs-Akkordion**: Tabs verschwinden nicht mehr nach Scan ✅
+  - **Root Cause**: `field_id` Spalte ist INTEGER, aber Scanner verwendete Strings ("group_0")
+  - Strings wurden zu `0` konvertiert → alle Tabs hatten `field_id: 0` → Duplicate Key
+  - **Lösung**: Negative Integer IDs für Group Labels (Group 0 → -1, Group 1 → -2)
+  - Alte fehlerhafte Group Labels (field_id=0) werden automatisch gelöscht
+  - Tabs bleiben jetzt persistent nach jedem Scan
+
 ## [1.2.4] - 2026-02-14
 
 ### Fixed
