@@ -127,8 +127,15 @@ class WSForm_ML_Language_Field_Manager {
 			$field->section_id = $first_section->id;
 			$field->type = 'hidden';
 			$field->label = __('Sprache / Language', 'wsform-ml');
+			
+			// Setze Meta-Daten VOR db_create()
+			$field->meta = (object)[
+				'label_render' => '',
+				'exclude_email' => '',
+				'default_value' => ''
+			];
 
-			// Speichere Field in DB (WSForm setzt automatisch Standard-Meta-Daten)
+			// Speichere Field in DB
 			$field_id = $field->db_create();
 
 			if (!$field_id) {
@@ -137,21 +144,6 @@ class WSForm_ML_Language_Field_Manager {
 					'error' => __('Field konnte nicht erstellt werden', 'wsform-ml')
 				];
 			}
-
-			// Lade das Feld neu, um die von WSForm gesetzten Meta-Daten zu erhalten
-			$field->id = $field_id;
-			$field->db_read();
-
-			// Setze nur die notwendigen Meta-Daten
-			if (!isset($field->meta)) {
-				$field->meta = new stdClass();
-			}
-			$field->meta->label_render = '';
-			$field->meta->exclude_email = '';
-			$field->meta->default_value = '';
-
-			// Speichere die aktualisierten Meta-Daten
-			$field->db_update();
 
 			// Publiziere Formular, damit WSForm das neue Feld erkennt
 			$ws_form->db_publish();
