@@ -5,6 +5,23 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.7.1] - 2026-02-16
+
+### 🐛 Fixed
+- **Cache-Invalidierung für neue Formulare**
+  - Neu erstellte WSForm Formulare werden jetzt sofort erkannt
+  - Hash-basierte Cache-Validierung statt Zeit-basiert
+  - Cache wird automatisch invalidiert bei Formular-Änderungen
+  - MD5-Hash aus `id:date_updated` aller Formulare
+  - Behält Performance-Vorteil des Caching
+
+### 📝 Changed
+- `admin/class-rest-api.php`: Hash-basierte Cache-Validierung für `get_forms()`
+
+### ℹ️ Info
+- Bugfix-Release für v1.7.0
+- Keine Breaking Changes
+
 ## [1.7.0] - 2026-02-14
 
 ### ✨ Added
