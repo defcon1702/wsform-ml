@@ -137,11 +137,23 @@ class WSForm_ML_REST_API {
 		try {
 			// Prüfe Cache (5 Minuten TTL)
 			$cache_key = 'wsform_ml_forms_list_v1';
+			$cache_hash_key = 'wsform_ml_forms_hash_v1';
 			$refresh = isset($_GET['refresh']) && $_GET['refresh'] === '1';
 			
 			if (!$refresh) {
 				$cached = get_transient($cache_key);
-				if ($cached !== false) {
+				$cached_hash = get_transient($cache_hash_key);
+				
+				// Prüfe ob sich die Formularliste geändert hat
+				global $wpdb;
+				$current_hash = $wpdb->get_var(
+					"SELECT MD5(GROUP_CONCAT(CONCAT(id, ':', date_updated) ORDER BY id)) 
+					 FROM {$wpdb->prefix}wsf_form 
+					 WHERE status != 'trash'"
+				);
+				
+				// Verwende Cache nur wenn Hash übereinstimmt
+				if ($cached !== false && $cached_hash === $current_hash) {
 					return rest_ensure_response($cached);
 				}
 			}
@@ -193,8 +205,16 @@ class WSForm_ML_REST_API {
 				}
 			}
 
+			// Berechne Hash für Cache-Validierung
+			$current_hash = $wpdb->get_var(
+				"SELECT MD5(GROUP_CONCAT(CONCAT(id, ':', date_updated) ORDER BY id)) 
+				 FROM {$wpdb->prefix}wsf_form 
+				 WHERE status != 'trash'"
+			);
+		
 			// Speichere im Cache (5 Minuten)
 			set_transient($cache_key, $forms, 5 * MINUTE_IN_SECONDS);
+			set_transient($cache_hash_key, $current_hash, 5 * MINUTE_IN_SECONDS);
 
 			return rest_ensure_response($forms);
 			
@@ -337,4 +357,5 @@ class WSForm_ML_REST_API {
 			return new WP_Error('delete_failed', __('Löschen fehlgeschlagen', 'wsform-ml'), ['status' => 500]);
 		}
 	}
+
 }
